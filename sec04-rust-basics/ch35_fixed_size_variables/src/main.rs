@@ -11,5 +11,9 @@ fn main() {
 
     let y = 4;
     println!("y is {}", y);
-
+     
+    // for loop with a range
+    for i in 0..=y {
+        print!("{} \n", i);
+    }
 }
