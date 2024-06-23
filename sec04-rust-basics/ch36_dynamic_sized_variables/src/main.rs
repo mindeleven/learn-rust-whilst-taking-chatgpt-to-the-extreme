@@ -23,6 +23,9 @@ fn main() {
     chars.push('l'); // adding an element at the end
     chars.push('o');
     println!("{:?}", chars); // printing out chars
-    dbg!(chars); // printing out in debug mode
+    dbg!(&chars); // printing out in debug mode
+    
+    let removed_char = chars.pop().unwrap();
+    println!("Removed char: {}", removed_char);
 
 }
