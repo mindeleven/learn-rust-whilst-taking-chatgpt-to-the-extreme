@@ -3,7 +3,7 @@ fn main() {
     let name: &str = "Fernand";
     println!("The name is {}", name);
 
-    // dynamic string on the heao
+    // dynamic string on the heap
     let dynamic_name = String::from("Fernand Braudel");
     // printing out with a pointer
     println!("The dynamic name ({}) in memory is {:p}", dynamic_name, &dynamic_name); // 0x16d08eb18
@@ -15,7 +15,7 @@ fn main() {
     let str_slice = &dynamic_name[0..5];
     println!("str_slice of dynamic_name is {}", str_slice);
     
-    // mutable vactor
+    // mutable vector
     let mut chars: Vec<char> = Vec::new();
     chars.insert(0, 'h'); // inserting a value with index
     chars.insert(1, 'e');
