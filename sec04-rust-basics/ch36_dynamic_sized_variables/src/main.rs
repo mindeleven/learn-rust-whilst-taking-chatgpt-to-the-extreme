@@ -54,4 +54,12 @@ fn main() {
             print!("=0x");
         }
     }
+    println!("");
+
+    // closures
+    let num = 5;
+    let add_num = |x: i32| x + num; // variable that can be called as a function
+    let num_num = add_num(6);
+    dbg!(num_num);
+
 }
