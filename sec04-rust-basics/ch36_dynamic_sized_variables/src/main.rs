@@ -27,5 +27,6 @@ fn main() {
     
     let removed_char = chars.pop().unwrap();
     println!("Removed char: {}", removed_char);
+    println!("Chars after remove: {:?}", chars);
 
 }
