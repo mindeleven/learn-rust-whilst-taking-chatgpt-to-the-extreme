@@ -43,4 +43,15 @@ fn main() {
     chars_again.iter().for_each(|c| print!("{}", c));
     println!("");
 
+    // collecting into a string with the help of an iterator
+    let collected: String = chars_again.iter().collect();
+    dbg!(collected);
+    
+    // traditional for loop
+    for c in chars_again {
+        print!("{}", c);
+        if c == 'l' {
+            print!("=0x");
+        }
+    }
 }
