@@ -29,4 +29,18 @@ fn main() {
     println!("Removed char: {}", removed_char);
     println!("Chars after remove: {:?}", chars);
 
+    // iterator
+    chars.iter().for_each(|c| print!("{}", c));
+    print!(" ain't a bad place to be\n");
+
+    // vec! macro
+    let chars_again: Vec<char> = vec![
+        'a', 'l', 'l', ' ', 't', 'h', 'a', 't', 
+        ' ', 'h', 'e', 'a', 'v', 'e', 'n', ' ', 
+        'a', 'l', 'l', 'o', 'w', 's'
+    ];
+    dbg!(&chars_again);
+    chars_again.iter().for_each(|c| print!("{}", c));
+    println!("");
+
 }
