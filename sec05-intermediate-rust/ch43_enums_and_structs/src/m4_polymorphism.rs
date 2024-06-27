@@ -49,9 +49,22 @@ mod test {
     // cargo test tests_polymorphism -- --nocapture
     #[test] 
     fn tests_polymorphism() {
+        // random address from etherscan.io
+        let ethereum_addr = "0x4aBB3B9De130887942B36De71569AF6a0846Ce5E";
+        let addr: Address = Address::from_str(ethereum_addr).unwrap();
+        
+        let new_addr = get_etherum_address(addr);
+        assert_eq!(
+            Address::from_str("0x4aBB3B9De130887942B36De71569AF6a0846Ce5E").unwrap(),
+            new_addr
+        );
 
-        dbg!("tests_polymorphism");
-    
+        let new_addr_from_str = get_etherum_address("0x4aBB3B9De130887942B36De71569AF6a0846Ce5E");
+        assert_eq!(
+            Address::from_str("0x4aBB3B9De130887942B36De71569AF6a0846Ce5E").unwrap(),
+            new_addr_from_str
+        );
+
     }
 
 }
