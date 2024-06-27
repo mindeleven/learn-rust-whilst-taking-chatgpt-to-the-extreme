@@ -8,8 +8,9 @@ use std::str::FromStr; // needed to create an address type from a string
 /// therefore the generic type
 /// after having defined and implemented EthereumAddress trait
 /// -> parameter is some generic type that's implemented EthereumAddress
-fn get_etherum_address<T: EthereumAddress>(_address: T) {
-    unimplemented!()
+fn get_etherum_address<T: EthereumAddress>(address: T) -> Address {
+    let converted_address: Address = address.convert_address().unwrap();
+    converted_address
 }
 
 /// possilble solution for the above described problem
