@@ -3,14 +3,26 @@
 
 #[cfg(test)]
 mod test {
+    use std::num::ParseIntError;
+
     use super::*;
     
-    // cargo test tests_patterns -- --nocapture
+    // cargo test tests_match_literals -- --nocapture
     #[test] 
-    fn tests_patterns() {
+    fn tests_match_literals() {
+        
+        let number: i32 = 20;
 
-        dbg!("tests_lpatterns");
+        let res: &str = match number {
+            1 => "number is one",
+            2 | 3 | 9 | 15 | 20 => "number is 2, 3, 9, 15 or 20",
+            _ => "it's still another number"
+        };
+
+        dbg!(res);
     
     }
+    
+    
 
 }
