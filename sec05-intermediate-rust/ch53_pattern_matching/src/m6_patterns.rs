@@ -50,4 +50,22 @@ mod test {
 
     }
 
+    // cargo test tests_if_let -- --nocapture
+    #[test] 
+    fn tests_if_let() {
+        
+        let some_num: Option<i32> = Some(10);
+
+        // if let
+        // if some_num is of type Some()
+        // then evaluate the value of the Some
+        let res = if let Some(i) = some_num {
+            i // return i
+        } else {
+            panic!("There was a problem"); // panic!!!!!
+        };
+
+        dbg!(res);
+
+    }
 }
