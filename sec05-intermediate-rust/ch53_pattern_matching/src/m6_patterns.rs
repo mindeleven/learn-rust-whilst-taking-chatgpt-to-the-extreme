@@ -23,6 +23,31 @@ mod test {
     
     }
     
-    
+    // cargo test tests_match_option -- --nocapture
+    #[test] 
+    fn tests_match_option() {
+        
+        let some_num: Option<i32> = Some(10);
+        
+        let res: i32 = match some_num {
+            Some(i) =>  i,
+            None => {
+                panic!("There was a problem");
+            },
+        };
+        dbg!(res);
+
+        let prob_none: Option<i32> = None;
+        let prob_none: Option<i32> = Some(66); // comment this line out to panic
+
+        let res_prob: i32 = match prob_none {
+            Some(i) =>  i,
+            None => {
+                panic!("There was a problem"); // panicked at src/m6_patterns.rs:44:17:
+            },
+        };
+        dbg!(res_prob);
+
+    }
 
 }
