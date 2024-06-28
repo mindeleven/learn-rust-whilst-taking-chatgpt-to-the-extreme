@@ -68,4 +68,31 @@ mod test {
         dbg!(res);
 
     }
+
+    // cargo test tests_match_result -- --nocapture
+    #[test] 
+    fn tests_match_result() {
+        
+        let some_res: Result<i32, &str> = Ok(10);
+        let some_err: Result<i32, &str> = Err("There was an error");
+
+
+        let res = match some_res {
+            Ok(val) =>  val,
+            Err(e) => {
+                panic!("There was an error: {}", e);
+            },
+        };
+        dbg!(res);
+
+        let r = if let Ok(r) = some_res {
+            r
+        } else {
+            panic!("There was a problem"); // panic!!!!!
+        };
+
+        dbg!(r);
+
+    }
+
 }
