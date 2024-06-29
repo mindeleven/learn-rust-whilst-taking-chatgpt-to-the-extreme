@@ -1,5 +1,30 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
+use std::thread::yield_now;
+
+enum Message {
+    Quit,
+    ChangeColor(i32, i32, i32),
+    Move { x: i32, y: i32 },
+    Write(String),
+}
+
+fn process_msg(msg: Message) {
+    match msg {
+        Message::Quit => {
+            println!("I quit");
+        },
+        Message::ChangeColor(red, blue, green) => {
+            println!("Red: {}, Blue: {}, Green: {}", red, blue, green);
+        },
+        Message::Move {x, y: new_name} => {
+            println!("x is {},  y as new_name is {}", x, new_name);
+        },
+        Message::Write(text) => {
+            println!("{}", text);
+        }  
+    };
+}
 
 #[cfg(test)]
 mod test {
@@ -7,10 +32,23 @@ mod test {
 
     use super::*;
     
+    // cargo test tests_large_enum -- --nocapture
+    #[test] 
+    fn tests_large_enum() {
+        let my_quit = Message::Quit;
+        let my_color = Message::ChangeColor(10, 20, 255);
+        let my_move = Message::Move { x: 10, y: 200 };
+        let my_writing = Message::Write("Once upon a time".to_string());
+        process_msg(my_quit);
+        process_msg(my_color);
+        process_msg(my_move);
+        process_msg(my_writing);
+    }
+
     // cargo test tests_match_literals -- --nocapture
     #[test] 
     fn tests_match_literals() {
-        
+
         let number: i32 = 20;
 
         let res: &str = match number {
