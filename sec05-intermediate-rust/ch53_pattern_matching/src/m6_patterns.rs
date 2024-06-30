@@ -32,9 +32,45 @@ mod test {
 
     use super::*;
     
+    // cargo test tests_match_guard -- --nocapture
+    #[test] 
+    fn tests_match_guard() {
+
+        let pair = (2, -2);
+        
+        match pair {
+            // match guard: if statements that have to be true for a line to be true
+            (x, y) if x == y => println!("They match!"),
+            (x, y) if x + y == 0 => println!("They neutralize!"),
+            (_, y) if y == 2 => println!("y is indeed +2!"),
+            _ => println!("Something else"),
+        };
+    
+    }
+
+    // cargo test tests_match_struct -- --nocapture
+    #[test] 
+    fn tests_match_struct() {
+
+        struct Location {
+            x: i32,
+            y: i32
+        }
+
+        let location = Location { x: 0, y: 30};
+
+        match location {
+            Location { x, y: 0 } => println!("y is on the x-axis"),
+            Location { x: 0, y } => println!("x is on the y-axis"),
+            Location { x, y } => println!("neither x nor y are on an axis"),
+        };
+    
+    }
+
     // cargo test tests_large_enum -- --nocapture
     #[test] 
     fn tests_large_enum() {
+
         let my_quit = Message::Quit;
         let my_color = Message::ChangeColor(10, 20, 255);
         let my_move = Message::Move { x: 10, y: 200 };
