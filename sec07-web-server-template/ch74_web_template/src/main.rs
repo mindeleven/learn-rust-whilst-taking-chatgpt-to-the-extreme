@@ -64,7 +64,7 @@ impl Database {
         }
     }
 
-    // crud data
+    // CRUD DATA RELATED FUNCTIONS
     fn insert(&mut self, task: Task) {
         self.tasks.insert(task.id, task);
     }
@@ -81,10 +81,28 @@ impl Database {
         self.tasks.remove(id);
     }
 
-    fn update(&mut self, task: Task) {
+    fn update(&mut self, user: User) {
+        self.users.insert(user.id, user);
+    }
+
+    // USER DATA RELATED FUNCTIONS
+    fn insert_user(&mut self, task: Task) {
         self.tasks.insert(task.id, task);
     }
-    
+
+    fn get_user_by_name(&self, username: &str) -> Option<&User> {
+        self.users.values().find(|u| u.username == username)
+    }
+
+    // DATABASE SAVING
+    // converting the hashmap into a using file
+    fn save_to_file(&self) -> std::io::Result<()> {
+        let data = serde_json::to_string(&self)?;
+        let mut file: fs::File = fs::File::create("./data/database.json")?;
+        file.write_all(data.as_bytes())?;
+        Ok(())
+    }
+
 }
 
 fn main() {
