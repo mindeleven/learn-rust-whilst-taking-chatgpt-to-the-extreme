@@ -1,7 +1,5 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 
-use ethers::types::transaction::response;
-
 // function returns json formated structure or error from reqwest
 async fn my_asnc_call(url: &str) -> Result<serde_json::Value, reqwest::Error> {
     
