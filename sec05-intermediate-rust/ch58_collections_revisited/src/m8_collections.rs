@@ -1,13 +1,9 @@
-#![allow(dead_code, unused_imports, unused_variables)]
-
-use std::collections::{
-    HashMap,
-    HashSet,
-};
-
 #[cfg(test)]
 mod test {
-    use super::*;
+    use std::collections::{
+        HashMap,
+        HashSet,
+    };
     
     // cargo test tests_hashmap -- --nocapture
     #[test] 
