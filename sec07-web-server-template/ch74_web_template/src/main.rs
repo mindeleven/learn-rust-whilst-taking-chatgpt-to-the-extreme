@@ -1,5 +1,11 @@
 #![allow(unused_imports)]
 
+/// purpose of the project:
+/// building a web server that does a number of things
+/// as a support for a to do app
+/// it can create, read, update and delete data 
+/// or fetch data from somewhere
+
 use actix_cors::Cors;
 
 use actix_web::{
