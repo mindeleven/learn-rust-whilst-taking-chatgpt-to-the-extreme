@@ -20,13 +20,23 @@ mod test {
         results_hm.insert(&person_2, 52);
         // hashmap.get returns an option
         let test_result = results_hm.get(person_1);
-        dbg!(test_result);
+        // dbg!(test_result); // returns Some()
+        dbg!(test_result.unwrap()); // unwraps Some()
     }
 
     // cargo test tests_hashset -- --nocapture
     #[test] 
     fn tests_hashset() {
         // using a hashset to store values in general
-        dbg!("tests_hashset");
+        // storing items in a basic set
+        let mut names_hs: HashSet<&str> = HashSet::new();
+        names_hs.insert("Bob");
+        names_hs.insert("Alice");
+        names_hs.insert("Jane");
+
+        if names_hs.contains("Bob") {
+            dbg!("Bob is here!");
+        }
     }
+   
 }
