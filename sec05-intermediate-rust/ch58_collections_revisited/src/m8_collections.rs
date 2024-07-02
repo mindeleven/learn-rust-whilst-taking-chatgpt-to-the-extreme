@@ -22,6 +22,11 @@ mod test {
         let test_result = results_hm.get(person_1);
         // dbg!(test_result); // returns Some()
         dbg!(test_result.unwrap()); // unwraps Some()
+
+        // 
+        if results_hm.contains_key("Alice") {
+            dbg!("Alice was here!");
+        }
     }
 
     // cargo test tests_hashset -- --nocapture
