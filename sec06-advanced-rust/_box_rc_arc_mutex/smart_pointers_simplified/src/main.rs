@@ -28,6 +28,7 @@ struct LinkListNode {
 
 mod m1_rc;
 mod m2_rc_weak;
+mod m3_arc;
 
 fn main() {
     println!("Coding along with \"Box / Rc / Arc / Mutex - Smart Pointers Simplified - Rust\" by Bocksdin Coding");
