@@ -118,6 +118,18 @@ struct AppState {
     db: Mutex<Database>,
 }
 
+// call to webserver
+// returns responder from actix web
+async fn create_task(app_state: web::Data<AppState>, task: web::Json<Task>) -> impl Responder {
+    // db is wrapped in Mutex so we need to lock it
+    let mut db = app_state.db.lock().unwrap();
+    // creating a task
+    // into_inner is extracting the task out of what it's wrapped into
+    db.insert(task.into_inner());
+    let _ = db.save_to_file();
+    HttpResponse::Ok().finish()
+}
+
 fn main() {
     println!("Hello, world!");
 }
