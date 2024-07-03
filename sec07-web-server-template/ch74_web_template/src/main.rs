@@ -111,6 +111,13 @@ impl Database {
 
 }
 
+// we've shared data that users will try to access at the same time
+// therefore we implement Mutex
+struct AppState {
+    // database data will be shared so we wrap it into a Mutex
+    db: Mutex<Database>,
+}
+
 fn main() {
     println!("Hello, world!");
 }
