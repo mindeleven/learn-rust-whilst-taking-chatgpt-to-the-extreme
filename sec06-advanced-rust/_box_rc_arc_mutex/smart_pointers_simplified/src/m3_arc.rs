@@ -8,12 +8,14 @@ use std::sync::{
 };
 use std::thread;
 
+#[derive(Debug)]
 struct Owner {
     name: String,
     tools: Vec<Weak<Tool>>
 
 }
 
+#[derive(Debug)]
 struct Tool {
     owner: Arc<Owner>
 }
@@ -53,5 +55,8 @@ mod test {
         }
 
         println!("--- ARC END -----");
+
+        dbg!(brad); // so far brad doesn't have any tools
+
     }
 }
