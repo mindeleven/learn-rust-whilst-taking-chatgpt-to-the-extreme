@@ -113,13 +113,15 @@ impl Database {
 
 // we've shared data that users will try to access at the same time
 // therefore we implement Mutex
-struct AppState {
+struct AppState { // state of the application
     // database data will be shared so we wrap it into a Mutex
     db: Mutex<Database>,
 }
 
 // call to webserver
 // returns responder from actix web
+// passing in the app state and data (the dask) in Json format
+// the type returned will implement the Responder trait
 async fn create_task(app_state: web::Data<AppState>, task: web::Json<Task>) -> impl Responder {
     // db is wrapped in Mutex so we need to lock it
     let mut db = app_state.db.lock().unwrap();
