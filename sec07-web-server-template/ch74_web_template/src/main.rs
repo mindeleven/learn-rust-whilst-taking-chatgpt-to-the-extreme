@@ -132,6 +132,18 @@ async fn create_task(app_state: web::Data<AppState>, task: web::Json<Task>) -> i
     HttpResponse::Ok().finish()
 }
 
-fn main() {
-    println!("Hello, world!");
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    // load the database or create a new one
+    let db = match Database::load_from_file() {
+        Ok(db) => db,
+        Err(_) => Database::new()
+    }; // what we get back here is a Database
+
+    let data = web::Data::new(AppState {
+        db: Mutex::new(db), // wrapping our Database into a Mutex, see definition above
+    });
+        
+
+    Ok(())
 }
