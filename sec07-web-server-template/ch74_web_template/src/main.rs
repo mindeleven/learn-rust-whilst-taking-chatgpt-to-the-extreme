@@ -8,6 +8,7 @@
 
 use actix_cors::Cors;
 
+use actix_web::web::post;
 use actix_web::{
     http::header, 
     web, 
@@ -141,9 +142,35 @@ async fn main() -> std::io::Result<()> {
     }; // what we get back here is a Database
 
     let data = web::Data::new(AppState {
+        // wrapping our Database into a Mutex so we can share it on multiple threads
         db: Mutex::new(db), // wrapping our Database into a Mutex, see definition above
     });
-        
+    
+    // creating new server
+    HttpServer::new(move || {
+        // creating new App
+        App::new()
+            // cross origin resource sharing
+            // == making calls to our web server from any port or domain
+            // handling calls with wrap()
+            .wrap(
+                Cors::permissive()
+                    .allowed_origin_fn(|origin, _req_head| {
+                        origin.as_bytes().starts_with(b"http://localhost") 
+                            || origin == "null"
 
-    Ok(())
+                    })
+                    .allowed_methods(vec!["GET", "POST", "PUT", "DELETE"])
+                    .allowed_headers(vec![header::AUTHORIZATION, header:: ACCEPT])
+                    .allowed_header(header::CONTENT_TYPE)
+                    .supports_credentials()
+                    .max_age(3600)
+            )
+            .app_data(data.clone()) // is not cloning as a deep copy bc web::Data is a smart pointer
+            .route("/task", post().to(create_task)) // to means what function to run
+    })
+    .bind("127.0.0.1:8080")?
+    .run()
+    .await
+        
 }
