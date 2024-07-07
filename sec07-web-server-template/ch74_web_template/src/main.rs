@@ -5,6 +5,15 @@
 /// as a support for a to do app
 /// it can create, read, update and delete data 
 /// or fetch data from somewhere
+/// 
+/// json example of a task:
+/*
+{
+    "id": 1,
+    "name": "my first task",
+    "completed": false
+}
+*/
 
 use actix_cors::Cors;
 
