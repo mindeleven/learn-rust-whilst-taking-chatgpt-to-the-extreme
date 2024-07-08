@@ -101,8 +101,8 @@ impl Database {
     // }
 
     // USER DATA RELATED FUNCTIONS
-    fn insert_user(&mut self, task: Task) {
-        self.tasks.insert(task.id, task);
+    fn insert_user(&mut self, user: User) {
+        self.users.insert(user.id, user);
     }
 
     fn get_user_by_name(&self, username: &str) -> Option<&User> {
@@ -180,6 +180,25 @@ async fn delete_task(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl
     HttpResponse::Ok().finish()
 }
 
+// USER functionality
+// async function to register a user
+async fn register(app_state: web::Data<AppState>, user: web::Json<User>) -> impl Responder {
+    let mut db = app_state.db.lock().unwrap();
+    db.insert_user(user.into_inner());
+    let _ = db.save_to_file();
+    HttpResponse::Ok().finish()
+}
+
+// async function to log in a user
+async fn login(app_state: web::Data<AppState>, user: web::Json<User>) -> impl Responder {
+    let mut db = app_state.db.lock().unwrap();
+    match db.get_user_by_name(&user.username) {
+        Some(stored_user) if stored_user.password == user.password => {
+            HttpResponse::Ok().body("You're logged in!")
+        },
+        _ => HttpResponse::BadRequest().body("Invalid username or password")
+    }
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
