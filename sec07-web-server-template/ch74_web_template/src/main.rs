@@ -7,6 +7,7 @@
 /// or fetch data from somewhere
 /// 
 /// json example of a task:
+/// http://localhost:8080/task
 /*
 {
     "id": 1,
@@ -87,13 +88,17 @@ impl Database {
         self.tasks.values().collect()
     }
     
+    fn update(&mut self, task: Task) {
+        self.tasks.insert(task.id, task);
+    }
+
     fn delete(&mut self, id: &u64) {
         self.tasks.remove(id);
     }
-
-    fn update(&mut self, user: User) {
-        self.users.insert(user.id, user);
-    }
+   
+    // fn update(&mut self, user: User) {
+    //     self.users.insert(user.id, user);
+    // }
 
     // USER DATA RELATED FUNCTIONS
     fn insert_user(&mut self, task: Task) {
@@ -142,6 +147,40 @@ async fn create_task(app_state: web::Data<AppState>, task: web::Json<Task>) -> i
     HttpResponse::Ok().finish()
 }
 
+// async function to read a task
+async fn read_task(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
+    let db = app_state.db.lock().unwrap();
+    // gettingbthe u64 out of path and matching it
+    match db.get(&id.into_inner()) {
+        Some(task) => HttpResponse::Ok().json(task),
+        None => HttpResponse::NotFound().finish()
+    }
+}
+
+// async function to read all tasks
+async fn read_all_tasks(app_state: web::Data<AppState>) -> impl Responder {
+    let db = app_state.db.lock().unwrap();
+    let tasks = db.get_all();
+    HttpResponse::Ok().json(tasks)
+}
+
+// async function to update a task
+async fn update_task(app_state: web::Data<AppState>, task: web::Json<Task>) -> impl Responder {
+    let mut db = app_state.db.lock().unwrap();
+    db.update(task.into_inner());
+    let _ = db.save_to_file();
+    HttpResponse::Ok().finish()
+}
+
+// async function to delete a task
+async fn delete_task(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
+    let mut db = app_state.db.lock().unwrap();
+    db.delete(&id.into_inner());
+    let _ = db.save_to_file();
+    HttpResponse::Ok().finish()
+}
+
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // load the database or create a new one
@@ -176,7 +215,11 @@ async fn main() -> std::io::Result<()> {
                     .max_age(3600)
             )
             .app_data(data.clone()) // is not cloning as a deep copy bc web::Data is a smart pointer
-            .route("/task", post().to(create_task)) // to means what function to run
+            .route("/task", web::post().to(create_task)) // to means what function to run
+            .route("/task/{id}", web::get().to(read_task))
+            .route("/task", web::get().to(read_all_tasks))
+            .route("/task", web::put().to(update_task))
+            .route("/task/{id}", web::delete().to(delete_task))
     })
     .bind("127.0.0.1:8080")?
     .run()
