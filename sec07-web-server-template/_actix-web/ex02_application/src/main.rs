@@ -16,26 +16,40 @@
 /// example: an application with the /app prefix and an index.html
 /// 
 use actix_web::{
-    web,
-    App,
-    HttpServer,
-    Responder
+    get, web, App, HttpServer, Responder
 };
 
-async fn index() -> impl Responder {
-    "Hello world"
+/// State
+/// -> shared with all routes and resources within the same scope
+/// -> can be accessed with the web::Data<T> extractor where T is the type of the state
+/// -> also accessible for middleware
+/// example: storing the application name in the state
+struct AppState {
+    app_name: String
+}
+
+#[get("/")]
+async fn index(data: web::Data<AppState>) -> String {
+    let app_name = &data.app_name;
+    format!("Hello world from {}!", app_name)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     
     HttpServer::new(|| {
-        App::new().service(
+        /* App::new().service(
             // scope() prefixes all resources and routes attached to it
             web::scope("/app")
                 // route() to handle requests for `GET /app/index.html`
                 .route("/index.html", web::get().to(index)),
-        )
+        ) */
+        // passing in the state when initializing the App
+        App::new()
+            .app_data(web::Data::new(AppState {
+                app_name: String::from("Actix web"),
+            }))
+            .service(index)
     })
     .bind(("127.0.0.1", 8080))?
     .run() // runs at http://127.0.0.1:8080/app/index.html
