@@ -15,6 +15,15 @@
     "completed": false
 }
 */
+/// json example of a user:
+/// http://localhost:8080/register
+/*
+{
+    "id": 1,
+    "username": "joe_doe",
+    "password": "123password"
+}
+*/
 
 use actix_cors::Cors;
 
@@ -191,7 +200,7 @@ async fn register(app_state: web::Data<AppState>, user: web::Json<User>) -> impl
 
 // async function to log in a user
 async fn login(app_state: web::Data<AppState>, user: web::Json<User>) -> impl Responder {
-    let mut db = app_state.db.lock().unwrap();
+    let db = app_state.db.lock().unwrap();
     match db.get_user_by_name(&user.username) {
         Some(stored_user) if stored_user.password == user.password => {
             HttpResponse::Ok().body("You're logged in!")
@@ -239,6 +248,8 @@ async fn main() -> std::io::Result<()> {
             .route("/task", web::get().to(read_all_tasks))
             .route("/task", web::put().to(update_task))
             .route("/task/{id}", web::delete().to(delete_task))
+            .route("/register", web::post().to(register))
+            .route("/login", web::post().to(login))
     })
     .bind("127.0.0.1:8080")?
     .run()
