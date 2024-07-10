@@ -47,4 +47,11 @@ pub async fn call_gpt(messages: Vec<Message>) {
         .build()
         .unwrap();
 
+    // create chat completion
+    let chat_completion: ChatCompletion = ChatCompletion {
+        model: "gpt-4".to_string(),
+        messages,
+        temperature: 0.1
+    };
+
 }
