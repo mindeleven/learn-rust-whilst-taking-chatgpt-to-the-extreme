@@ -51,18 +51,40 @@ pub async fn call_gpt(messages: Vec<Message>) {
     let chat_completion: ChatCompletion = ChatCompletion {
         // model: "gpt-4".to_string(), // gpt-4-turbo
         model: "gpt-3.5-turbo-0125".to_string(),
+        // model: "gpt-3.5".to_string(),
         messages,
         temperature: 0.1
     };
 
     // troubleshooting
-    let res_raw = client
-        .post(url)
-        .json(&chat_completion)
-        .send()
-        .await
-        .unwrap();
+    // let res_raw: reqwest::Response = client
+    //     .post(url)
+    //     .json(&chat_completion)
+    //     .send()
+    //     .await
+    //     .unwrap();
 
-    dbg!(res_raw.text().await.unwrap());
+    // dbg!(res_raw.text().await.unwrap());
 
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_call_to_open_ai() {
+        // cargo test test_call_to_open_ai -- --nocapture
+
+        // 1st, let's create vector of messages
+        let message = Message {
+            role: "user".to_string(),
+            content: "Hi there, this is a test! Please give me a short response.".to_string()
+        };
+
+        let messages = vec![message];
+
+        call_gpt(messages).await;
+
+    }
 }
