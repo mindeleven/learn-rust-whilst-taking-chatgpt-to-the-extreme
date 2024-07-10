@@ -9,8 +9,8 @@ use serde::{
 /// recreating the message example with a struct
 #[derive(Debug, Serialize, Clone)]
 pub struct Message {
-    role: String,
-    content: String
+    pub role: String,
+    pub content: String
 }
 
 #[derive(Debug, Serialize, Clone)]
