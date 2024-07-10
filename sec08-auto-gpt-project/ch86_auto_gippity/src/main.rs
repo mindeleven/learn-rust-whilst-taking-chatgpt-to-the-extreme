@@ -9,8 +9,6 @@ mod models;
 use helpers::command_line::get_user_response;
 use std::fs;
 
-use apis::call_request::api_key_test;
-
 fn main() {
     /* 
     let api_key = fs::read_to_string(
@@ -24,8 +22,6 @@ fn main() {
     dbg!(api_key);
     dbg!(org_id);
     */
-    
-    api_key_test();
 
     let user_req = get_user_response(
         "What webserver are we building today?"
