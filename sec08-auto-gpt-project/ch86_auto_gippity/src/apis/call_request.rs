@@ -41,20 +41,28 @@ pub async fn call_gpt(messages: Vec<Message>)
     // create api key header
     headers.insert(
         "authorization",
-        HeaderValue::from_str(&format!("Bearer {}", api_key)).unwrap()
+        HeaderValue::from_str(&format!("Bearer {}", api_key))
+            .map_err(|e| -> Box<dyn std::error::Error + Send> {
+                Box::new(e)
+            })?
     );
 
     // create api Open AI org header
     headers.insert(
         "OpenAI-Organization",
-        HeaderValue::from_str(api_org.as_str()).unwrap()
+        HeaderValue::from_str(api_org.as_str())
+            .map_err(|e| -> Box<dyn std::error::Error + Send> {
+                Box::new(e)
+            })?
     );
 
     // Create client
     let client = Client::builder()
         .default_headers(headers)
         .build()
-        .unwrap();
+        .map_err(|e| -> Box<dyn std::error::Error + Send> {
+            Box::new(e)
+        })?;
 
     // create chat completion
     let chat_completion: ChatCompletion = ChatCompletion {
@@ -74,6 +82,8 @@ pub async fn call_gpt(messages: Vec<Message>)
     //     .unwrap();
 
     // dbg!(res_raw.text().await.unwrap());
+
+    Ok("Temporary placeholder to avoid error messages".to_string())
 
 }
 
