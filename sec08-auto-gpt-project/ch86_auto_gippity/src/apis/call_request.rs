@@ -1,4 +1,7 @@
-use crate::models::general::llm::{ Message };
+use crate::models::general::llm::{ 
+    ChatCompletion,
+    Message 
+};
 use reqwest::Client;
 use std::fs;
 
@@ -37,5 +40,11 @@ pub async fn call_gpt(messages: Vec<Message>) {
         "OpenAI-Organization",
         HeaderValue::from_str(api_org.as_str()).unwrap()
     );
+
+    // Create client
+    let client = Client::builder()
+        .default_headers(headers)
+        .build()
+        .unwrap();
 
 }
