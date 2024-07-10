@@ -54,4 +54,14 @@ pub async fn call_gpt(messages: Vec<Message>) {
         temperature: 0.1
     };
 
+    // troubleshooting
+    let res_raw = client
+        .post(url)
+        .json(&chat_completion)
+        .send()
+        .await
+        .unwrap();
+
+    dbg!(res_raw.text().await.unwrap());
+
 }
