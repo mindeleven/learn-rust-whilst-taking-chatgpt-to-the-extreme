@@ -11,7 +11,16 @@ use reqwest::header::{
 };
 
 // call large language model
-pub async fn call_gpt(messages: Vec<Message>) {
+// returnig a result that is a string or a dynamic sized error from std
+// std::error::Error can hold any type of error the implements the error trait
+// advantage: flexibility, different kind of errors can be produeced
+// dyn is meant to specify that the Error is a trait object
+// dynamic dispatch -> deciding which method to call at runtime
+// Send is  a marker trait
+// Send implies that ownership of the type implementing Send
+// can be safely transfered between threats
+pub async fn call_gpt(messages: Vec<Message>) 
+    -> Result<String, Box<dyn std::error::Error + Send>> {
 
     // extract api key information
     // not using dotenv here to protect info from git upload
