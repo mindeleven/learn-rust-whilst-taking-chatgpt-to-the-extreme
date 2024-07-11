@@ -33,7 +33,7 @@ pub async fn call_gpt(messages: Vec<Message>)
     ).expect("Unable to read org_id file");
     
     // confirm endpoint
-    let url: &str = "https://api.openai.com/";
+    let url: &str = "https://api.openai.com/v1/chat/completions";
 
     // create headers
     let mut headers = HeaderMap::new();
@@ -66,22 +66,26 @@ pub async fn call_gpt(messages: Vec<Message>)
 
     // create chat completion
     let chat_completion: ChatCompletion = ChatCompletion {
-        // model: "gpt-4".to_string(), // gpt-4-turbo
-        model: "gpt-3.5-turbo-0125".to_string(),
+        model: "gpt-4o".to_string(), // gpt-4-turbo
+        // model: "gpt-3.5-turbo-1106".to_string(),
         // model: "gpt-3.5".to_string(),
         messages,
         temperature: 0.1
     };
 
-    // troubleshooting
-    // let res_raw: reqwest::Response = client
-    //     .post(url)
-    //     .json(&chat_completion)
-    //     .send()
-    //     .await
-    //     .unwrap();
+    // troubleshooting, printing the response out
+    let res_raw: reqwest::Response = client
+        .post(url)
+        .json(&chat_completion)
+        .send()
+        .await
+        .unwrap();
 
-    // dbg!(res_raw.text().await.unwrap());
+    dbg!(res_raw.text().await.unwrap());
+    // prints out the following json string:
+    /* 
+    [src/apis/call_request.rs:84:5] res_raw.text().await.unwrap() = "{\n  \"id\": \"chatcmpl-9jjtlAYEeVCODCLHOh8B1jnl6aEDU\",\n  \"object\": \"chat.completion\",\n  \"created\": 1720688221,\n  \"model\": \"gpt-4o-2024-05-13\",\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"Hello! Your test is successful. How can I assist you today?\"\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 22,\n    \"completion_tokens\": 14,\n    \"total_tokens\": 36\n  },\n  \"system_fingerprint\": \"fp_dd932ca5d1\"\n}\n"
+    */
 
     Ok("Temporary placeholder to avoid error messages".to_string())
 
