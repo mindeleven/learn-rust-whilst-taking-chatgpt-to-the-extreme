@@ -19,3 +19,8 @@ pub struct ChatCompletion {
     pub messages: Vec<Message>,
     pub temperature: f32
 }
+
+#[derive(Debug, Serialize, Clone)]
+pub struct APIMessage {
+    content: String
+}
