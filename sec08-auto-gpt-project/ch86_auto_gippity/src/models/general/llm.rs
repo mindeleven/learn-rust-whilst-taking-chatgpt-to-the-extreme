@@ -20,7 +20,7 @@ pub struct ChatCompletion {
     pub temperature: f32
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Deserialize)]
 pub struct APIMessage {
     content: String
 }
