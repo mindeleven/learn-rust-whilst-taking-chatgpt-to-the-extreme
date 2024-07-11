@@ -24,3 +24,14 @@ pub struct ChatCompletion {
 pub struct APIMessage {
     content: String
 }
+
+#[derive(Debug, Deserialize)]
+pub struct APIChoice {
+    message: APIMessage
+}
+
+
+#[derive(Debug, Deserialize)]
+pub struct APIResponse {
+    choices: Vec<APIChoice>
+}
