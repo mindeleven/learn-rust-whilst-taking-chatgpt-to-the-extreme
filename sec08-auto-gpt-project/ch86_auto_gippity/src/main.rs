@@ -7,22 +7,8 @@ mod helpers;
 mod models;
 
 use helpers::command_line::get_user_response;
-use std::fs;
 
 fn main() {
-    /* 
-    let api_key = fs::read_to_string(
-        "../../../../../../tmp/chat_gpt/gippity_key_1.txt"
-    ).expect("Unable to read file");
-
-    let org_id = fs::read_to_string(
-        "../../../../../../tmp/chat_gpt/org_id.txt"
-    ).expect("Unable to read file");
-
-    dbg!(api_key);
-    dbg!(org_id);
-    */
-
     let user_req = get_user_response(
         "What webserver are we building today?"
     );
