@@ -22,16 +22,16 @@ pub struct ChatCompletion {
 
 #[derive(Debug, Deserialize)]
 pub struct APIMessage {
-    content: String
+    pub content: String
 }
 
 #[derive(Debug, Deserialize)]
 pub struct APIChoice {
-    message: APIMessage
+    pub message: APIMessage
 }
 
 
 #[derive(Debug, Deserialize)]
 pub struct APIResponse {
-    choices: Vec<APIChoice>
+    pub choices: Vec<APIChoice>
 }
