@@ -1,4 +1,5 @@
 use crate::models::general::llm::{ 
+    APIResponse,
     ChatCompletion,
     Message 
 };
@@ -19,6 +20,7 @@ use reqwest::header::{
 // Send is  a marker trait
 // Send implies that ownership of the type implementing Send
 // can be safely transfered between threats
+#[allow(dead_code)]
 pub async fn call_gpt(messages: Vec<Message>) 
     -> Result<String, Box<dyn std::error::Error + Send>> {
 
@@ -74,20 +76,38 @@ pub async fn call_gpt(messages: Vec<Message>)
     };
 
     // troubleshooting, printing the response out
-    let res_raw: reqwest::Response = client
-        .post(url)
-        .json(&chat_completion)
-        .send()
-        .await
-        .unwrap();
+    // let res_raw: reqwest::Response = client
+    //     .post(url)
+    //     .json(&chat_completion)
+    //     .send()
+    //     .await
+    //     .unwrap();
 
-    dbg!(res_raw.text().await.unwrap());
+    // dbg!(res_raw.text().await.unwrap());
     // prints out the following json string:
     /* 
     [src/apis/call_request.rs:84:5] res_raw.text().await.unwrap() = "{\n  \"id\": \"chatcmpl-9jjtlAYEeVCODCLHOh8B1jnl6aEDU\",\n  \"object\": \"chat.completion\",\n  \"created\": 1720688221,\n  \"model\": \"gpt-4o-2024-05-13\",\n  \"choices\": [\n    {\n      \"index\": 0,\n      \"message\": {\n        \"role\": \"assistant\",\n        \"content\": \"Hello! Your test is successful. How can I assist you today?\"\n      },\n      \"logprobs\": null,\n      \"finish_reason\": \"stop\"\n    }\n  ],\n  \"usage\": {\n    \"prompt_tokens\": 22,\n    \"completion_tokens\": 14,\n    \"total_tokens\": 36\n  },\n  \"system_fingerprint\": \"fp_dd932ca5d1\"\n}\n"
     */
 
-    Ok("Temporary placeholder to avoid error messages".to_string())
+    // building the response out
+    // Get API response
+    let response: APIResponse = client
+        .post(url)
+        .json(&chat_completion)
+        .send()
+        .await
+        .map_err(|e| -> Box<dyn std::error::Error + Send> {
+            Box::new(e)
+        })?
+        // now getting the json output from the response
+        .json()
+        .await
+        .map_err(|e| -> Box<dyn std::error::Error + Send> {
+            Box::new(e)
+        })?;
+    
+    // send response
+    Ok(response.choices[0].message.content.clone())
 
 }
 
@@ -107,7 +127,12 @@ mod test {
 
         let messages = vec![message];
 
-        call_gpt(messages).await;
-
+        let res: Result<String, Box<dyn std::error::Error + Send>> = call_gpt(messages).await;
+        if let Ok(res_str) = res {
+            dbg!(res_str);
+            assert!(true);
+        } else {
+            assert!(false);
+        }
     }
 }
