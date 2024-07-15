@@ -7,6 +7,10 @@ use syn::{
     DeriveInput
 };
 
+// modifying macro following example 
+// @ https://github.com/dtolnay/syn/tree/master/examples/heapsize
+// HelloWorld is defined as a trait in hello_world sub project
+
 // writing a derive macro function
 #[proc_macro_derive(HelloWorld)]
 // if this macro gets wrappes around a struct,
@@ -23,12 +27,13 @@ pub fn helloworld_object_derive(input: TokenStream) -> TokenStream {
     //
     // now: generate the code to paste into the users program
     // with the quote! macro
+
     let expand = quote! {
         // allows us to take this implementation of HelloWorld and apply it to the name
-        impl HelloWorld for #name {
+        impl hello_world::HelloWorld for #name {
             // adds the following function to our struct
-            fn hello_world() {
-                println!("hello world");
+            fn hello_world(&self) {
+                println!("Printing from the implemented trait");
             }
         }
     };

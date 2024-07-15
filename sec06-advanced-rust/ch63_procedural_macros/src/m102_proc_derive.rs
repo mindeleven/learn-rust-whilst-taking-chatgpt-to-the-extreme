@@ -4,22 +4,24 @@ mod test {
     extern crate hello_world_macro;
     use hello_world_macro::HelloWorld;
 
-    // #[derive(HelloWorld)] -> ERROR: expected trait, found derive macro `HelloWorld`
+    use hello_world::HelloWorld;
+
+    #[derive(HelloWorld)]
     struct User {
         username: String,
         email: String,
     }
 
     #[test]
-    // cargo test tests_proc_macro_ex01 -- --nocapture
-    fn tests_proc_macro_ex01() {
+    // cargo test tests_proc_derive -- --nocapture
+    fn tests_proc_derive() {
         
         let user = User {
             username: "Alice".into(),
             email: "alice@alicesrestaurant.net".into(),
         };
     
-        // user.hello_world();
+        user.hello_world();
 
     }
 }

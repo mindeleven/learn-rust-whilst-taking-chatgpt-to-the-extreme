@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+hello_world = { path = "./hello_world" }
 hello_world_macro = { path = "./hello_world_macro" }
-answer_macro = { path = "./answer_macro" }
+# answer_macro = { path = "./answer_macro" }
 my_proc_macro = { path = "./my_proc_macro" }

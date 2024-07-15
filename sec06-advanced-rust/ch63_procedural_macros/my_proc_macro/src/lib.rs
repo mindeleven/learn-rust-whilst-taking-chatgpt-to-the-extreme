@@ -13,7 +13,7 @@ use syn::{
 
 // a function that makes a function
 #[proc_macro_attribute]
-pub fn function_to_string(item: TokenStream, _attr: TokenStream) -> TokenStream {
+pub fn function_to_string(_attr: TokenStream, item: TokenStream) -> TokenStream {
     
     // parse the input function
     let  input_fn: ItemFn = parse_macro_input!(item as ItemFn);
