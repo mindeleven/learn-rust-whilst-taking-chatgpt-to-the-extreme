@@ -107,6 +107,8 @@ pub async fn call_gpt(messages: Vec<Message>)
         })?;
     
     // send response
+    // as we know the structure of the response we can extract
+    // the message from the json
     Ok(response.choices[0].message.content.clone())
 
 }
