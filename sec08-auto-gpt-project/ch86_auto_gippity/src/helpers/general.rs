@@ -4,6 +4,7 @@ use std::fmt::format;
 use crate::models::general::llm::Message;
 
 // appending a string to the and od an ai_function
+// extend ai function to encourage specific output
 pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -> Message {
     
     let ai_function_str = ai_func(func_input);
@@ -15,13 +16,12 @@ pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -
     Nothing else. No commentary. Here is the input to the function {}.
     Print out what the function will return.",
     ai_function_str, func_input);
-
-    dbg!(msg);
-    
     // "Hopefully this is starting to make sense", Shaun just said
+    
+    // return message
     Message {
-        role: "to be replaced later".to_string(),
-        content: "to be replaced later".to_string()
+        role: "system".to_string(),
+        content: msg
     }
 }
 
@@ -35,6 +35,9 @@ mod tests {
     fn tests_extending_ai_function() {
         // let x_str = convert_user_input_to_goal("dummy_variable");
         // dbg!(x_str);
-        extend_ai_function(convert_user_input_to_goal, "dummy input you fool");
+        let extended_msg: Message =
+            extend_ai_function(convert_user_input_to_goal, "dummy input");
+        dbg!(&extended_msg);
+        assert_eq!(extended_msg.role, "system".to_string());
     }
 }
