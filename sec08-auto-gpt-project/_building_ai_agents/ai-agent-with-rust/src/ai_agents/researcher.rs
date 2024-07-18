@@ -4,6 +4,9 @@
 
 use async_openai::{config::OpenAIConfig, Client as OpenAIClient};
 use crate::ai_agents::generic::Agent;
+use std::env;
+use reqwest::header::HeaderMap;
+
 
 #[derive(Clone)]
 pub struct Researcher {
@@ -43,4 +46,52 @@ impl Agent for Researcher {
 
 }
 
+// implement two methods for Researcher
+// (1) initialising the struct itself
+// (2) preparing the data to send into our agent pipeline
+impl Researcher {
+    // (1) initialising the struct itself
+    pub fn new() -> Self {
+        let api_key = env::var("OPENAI_API_KEY").unwrap();
+        let config = OpenAIConfig::new().with_api_key(api_key);
+
+        let openai_client = OpenAIClient::with_config(config);
+
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "X-API-KEY",
+            env::var("SERPER_API_KEY").unwrap().parse().unwrap(),
+        );
+        headers.insert("Content-Type", "application/json".parse().unwrap());
+
+        let http_client = reqwest::Client::builder()
+            .default_headers(headers)
+            .build()
+            .unwrap();
+
+        Self {
+            http_client,
+            system: None,
+            openai_client,
+        }
+    }
+    
+    // (2) preparing the data to send into our agent pipeline
+    pub async fn prepare_data(&self, prompt: &str) -> Result<String, ApiError> {
+        let json = serde_json::json!({
+            "q": prompt
+        });
+
+        let res = self
+            .http_client
+            .post("<https://google.serper.dev/search>")
+            .json(&json)
+            .send()
+            .await
+            .unwrap();
+
+        let json = res.json::<Value>().await?;
+        Ok(serde_json::to_string_pretty(&json)?)
+    }
+}
 
