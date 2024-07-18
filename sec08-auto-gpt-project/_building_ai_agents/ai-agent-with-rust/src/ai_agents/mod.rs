@@ -1,3 +1,3 @@
-mod generic;
-mod researcher;
-mod writer;
+pub mod generic;
+pub mod researcher;
+pub mod writer;
