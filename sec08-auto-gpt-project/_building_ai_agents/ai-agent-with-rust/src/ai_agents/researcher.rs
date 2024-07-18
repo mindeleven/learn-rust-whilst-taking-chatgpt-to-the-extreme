@@ -4,9 +4,10 @@
 
 use async_openai::{config::OpenAIConfig, Client as OpenAIClient};
 use crate::ai_agents::generic::Agent;
+use crate::helpers::errors::ApiError;
 use std::env;
 use reqwest::header::HeaderMap;
-
+use serde_json::Value;
 
 #[derive(Clone)]
 pub struct Researcher {
@@ -75,7 +76,7 @@ impl Researcher {
             openai_client,
         }
     }
-    
+
     // (2) preparing the data to send into our agent pipeline
     pub async fn prepare_data(&self, prompt: &str) -> Result<String, ApiError> {
         let json = serde_json::json!({
