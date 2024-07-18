@@ -2,7 +2,9 @@
 /// @ https://www.shuttle.rs/blog/2024/05/16/building-ai-content-writer-rust-gpt4o
 use axum::{routing::get, Router};
 
-mod errors;
+mod ai_agents;
+mod helpers;
+
 
 async fn hello_world() -> &'static str {
     "Hello, world!"
