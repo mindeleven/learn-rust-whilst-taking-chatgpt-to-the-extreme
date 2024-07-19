@@ -27,7 +27,7 @@ pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -
 }
 
 // function that performs call to LLM/OpenAI
-pub async fn ai_task_complete(
+pub async fn ai_task_request(
     // message context is the input to our function == will go into the ai function
     // (the func_input from extend_ai_function)
     msg_context: String,
@@ -77,4 +77,6 @@ mod tests {
         dbg!(&extended_msg);
         assert_eq!(extended_msg.role, "system".to_string());
     }
+    
+    
 }
