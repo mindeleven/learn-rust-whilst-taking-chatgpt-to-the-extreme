@@ -26,13 +26,24 @@ pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -
     }
 }
 
-// function that performs call to LLM/OpenAI
+/// function that prints a message about what the agent actually is doing,
+/// (1) extending the ai function, 
+/// (2) making the call to chat gpt4,
+/// (3) and if it doesn't work making the call again,
+/// (4) then, prints a message about what the agent actually is doing
+/// goal here is to give a function some input and let it do these three things
+// => function that performs call to LLM (or OpenAI, or backend, etc.)
 pub async fn ai_task_request(
     // message context is the input to our function == will go into the ai function
     // (the func_input from extend_ai_function)
     msg_context: String,
+    // telling the user what agent is doing what
     agent_position: &str, 
+    // and what operation are they doing
     agent_operation: &str, 
+    // function that we're actually going to pass
+    // gets a lifetime with for<'a>
+    // (a function passing a function into a function with lifetimes)
     function_pass: for<'a> fn(&'a str) -> &'static str
 ) -> String {
     
