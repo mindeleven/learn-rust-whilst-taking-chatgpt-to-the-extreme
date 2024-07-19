@@ -1,7 +1,8 @@
 #![allow(dead_code, unused_imports, unused_variables)]
 use std::fmt::format;
-
-use crate::models::general::llm::Message;
+use crate::apis::call_request::call_gpt;
+use crate::models::general::llm::{self, Message};
+use crate::helpers::command_line::PrintCommand;
 
 // appending a string to the and od an ai_function
 // extend ai function to encourage specific output
@@ -23,6 +24,42 @@ pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -
         role: "system".to_string(),
         content: msg
     }
+}
+
+// function that performs call to LLM/OpenAI
+pub async fn ai_task_complete(
+    // message context is the input to our function == will go into the ai function
+    // (the func_input from extend_ai_function)
+    msg_context: String,
+    agent_position: &str, 
+    agent_operation: &str, 
+    function_pass: for<'a> fn(&'a str) -> &'static str
+) -> String {
+    
+    // extend AI function
+    let extended_msg: Message = extend_ai_function(function_pass, &msg_context);
+
+    // print current status
+    PrintCommand::AICall.print_agent_message(
+        agent_position, 
+        agent_operation
+    );
+
+    // get LLM response from call_gpt
+    // returns Result<String, Box<dyn std::error::Error + Send>>
+    let llm_response_res: Result<String, Box<dyn std::error::Error + Send>> 
+        = call_gpt(vec![extended_msg.clone()]).await;
+
+    // handle success or try again
+    let llm_response = match llm_response_res {
+        Ok(llm_res) => llm_res,
+        // in case we didn't get a response we call chat gpt again
+        Err(_) => call_gpt(vec![extended_msg.clone()])
+                      .await
+                      .expect("Failed twice to call OpenAI"),
+    };
+
+    llm_response
 }
 
 #[cfg(test)]
