@@ -78,5 +78,20 @@ mod tests {
         assert_eq!(extended_msg.role, "system".to_string());
     }
     
-    
+    // cargo test tests_ai_task_request -- --nocapture
+    #[tokio::test]
+    async fn tests_ai_task_request() {
+        let ai_func_param = "Build me a webserver for making stock price api requests".to_string();
+
+        let res = ai_task_request(
+            ai_func_param,
+            "Managing agent", 
+            "Defining user requirements", 
+            convert_user_input_to_goal
+        ).await;
+        
+        assert!(res.len() > 20);
+
+        dbg!(res);
+    }
 }
