@@ -5,6 +5,41 @@ use crossterm::{
     ExecutableCommand,
 };
 
+/// according to the command a printout in a certain color will happen
+/// see that the program is working, output in different colors
+/// based on what the program is working
+/// different scenarios might have different colors in them
+#[derive(Debug,PartialEq)]
+pub enum PrintCommand {
+    AICall,
+    UnitTest,
+    Issue
+}
+
+impl PrintCommand {
+    pub fn print_agent_message(&self, agent_pos: &str, agent_statement: &str) {
+        let mut stdout: std::io::Stdout = stdout();
+
+        // decide the print color
+        let statement_color: Color = match self {
+            Self::AICall => Color::Cyan,
+            Self::UnitTest => Color::Magenta,
+            Self::Issue => Color::Red,
+        };
+
+        // print the agent statement
+        stdout.execute(SetForegroundColor(Color::Green)).unwrap();
+        print!("Agent: {}", agent_pos);
+
+        // reset color
+        stdout.execute(SetForegroundColor(statement_color)).unwrap();
+        print!("{}", agent_statement);
+
+        // reset color once again
+        stdout.execute(ResetColor).unwrap();
+    }
+}
+
 // get user request
 pub fn get_user_response(question: &str) -> String {
     let mut stdout: std::io::Stdout = stdout();
