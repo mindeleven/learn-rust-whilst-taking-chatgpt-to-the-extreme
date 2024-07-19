@@ -31,11 +31,11 @@ impl PrintCommand {
 
         // print the agent statement
         stdout.execute(SetForegroundColor(Color::Green)).unwrap();
-        print!("Agent: {}", agent_pos);
+        print!("Agent: {}: ", agent_pos);
 
         // reset color
         stdout.execute(SetForegroundColor(statement_color)).unwrap();
-        print!("{}", agent_statement);
+        println!("{}", agent_statement);
 
         // reset color once again
         stdout.execute(ResetColor).unwrap();
