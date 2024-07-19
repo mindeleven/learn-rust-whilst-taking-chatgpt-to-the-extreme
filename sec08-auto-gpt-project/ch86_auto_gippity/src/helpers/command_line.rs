@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::io::{stdin, stdout};
 
 use crossterm::{
@@ -60,4 +62,20 @@ pub fn get_user_response(question: &str) -> String {
 
     // trim whitespace and return
     return user_response.trim().to_string();
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    
+    // cargo test tests_print_agents_msg -- --nocapture
+    #[test]
+    fn tests_print_agents_msg() {
+
+        PrintCommand::AICall
+            .print_agent_message(
+                "Managing agent", 
+                "Testing, testing, processing something"
+            );
+    }
 }
