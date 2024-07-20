@@ -5,9 +5,9 @@
 use async_openai::{config::OpenAIConfig, Client as OpenAIClient};
 use crate::ai_agents::generic::Agent;
 use crate::helpers::errors::ApiError;
-use std::env;
 use reqwest::header::HeaderMap;
 use serde_json::Value;
+use std::fs;
 
 #[derive(Clone)]
 pub struct Researcher {
@@ -53,15 +53,26 @@ impl Agent for Researcher {
 impl Researcher {
     // (1) initialising the struct itself
     pub fn new() -> Self {
-        let api_key = env::var("OPENAI_API_KEY").unwrap();
+        // let api_key = env::var("OPENAI_API_KEY").unwrap();
+
+        let api_key = fs::read_to_string(
+            "../../../../../../../tmp/chat_gpt/gippity_key_1.txt"
+        ).expect("Unable to read api_key file");
+
         let config = OpenAIConfig::new().with_api_key(api_key);
 
         let openai_client = OpenAIClient::with_config(config);
 
         let mut headers = HeaderMap::new();
+
+        let serper_api_key = fs::read_to_string(
+            "../../../../../../../tmp/access_data/serper_api_key.txt"
+        ).expect("Unable to read serper_api_key file");
+
         headers.insert(
             "X-API-KEY",
-            env::var("SERPER_API_KEY").unwrap().parse().unwrap(),
+            // env::var("SERPER_API_KEY").unwrap().parse().unwrap(),
+            serper_api_key.parse().unwrap(),
         );
         headers.insert("Content-Type", "application/json".parse().unwrap());
 
