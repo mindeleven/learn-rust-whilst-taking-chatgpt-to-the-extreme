@@ -16,7 +16,7 @@ impl Writer {
 
         // not using dotenv here to have keys in only one place
         let api_key = fs::read_to_string(
-            "../../../../../../tmp/chat_gpt/gippity_key_1.txt"
+            "../../../../../../../tmp/chat_gpt/gippity_key_1.txt"
         ).expect("Unable to read api_key file");
 
         let config = OpenAIConfig::new().with_api_key(api_key);
@@ -29,6 +29,7 @@ impl Writer {
     }
 }
 
+#[allow(dead_code)]
 impl Agent for Writer {
     fn name(&self) -> String {
         "Writer".to_string()
