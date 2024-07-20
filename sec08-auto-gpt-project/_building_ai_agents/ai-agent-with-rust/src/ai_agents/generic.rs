@@ -19,6 +19,7 @@ use async_openai::types::{
 /// the idea behind the generic interface is that it holds all of the relevant methods
 /// for the different agents
 /// the prompt function alone cannot reference types that it doesn't know about
+#[allow(dead_code)]
 pub trait Agent {
     fn name(&self) -> String;
     fn client(&self) -> OpenAIClient<OpenAIConfig>;
