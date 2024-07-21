@@ -126,7 +126,10 @@ pub fn save_backend_code(contents: &String) {
 }
 
 // (3) Save JSON endpoint API schema
-
+pub fn save_api_endpoints(api_endpoints: &String) {
+    let path = String::from(API_SCHEMA_PATH);
+    fs::write(path, api_endpoints).expect("Failed to write api_schema.json file");
+}
 
 
 #[cfg(test)]
