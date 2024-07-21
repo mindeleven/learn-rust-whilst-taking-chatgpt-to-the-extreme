@@ -3,6 +3,8 @@ use std::fmt::format;
 use crate::apis::call_request::call_gpt;
 use crate::models::general::llm::{self, Message};
 use crate::helpers::command_line::PrintCommand;
+use serde::de::DeserializeOwned;
+use reqwest::Client;
 
 // appending a string to the and od an ai_function
 // extend ai function to encourage specific output
@@ -72,6 +74,36 @@ pub async fn ai_task_request(
 
     llm_response
 }
+
+// performs call to LLM GPT - Decoded
+// LLM is supposed to return a decoded struct (a gerneric type)
+pub async fn ai_task_request_decoded<T: DeserializeOwned>(
+    msg_context: String,
+    agent_position: &str, 
+    agent_operation: &str, 
+    function_pass: for<'a> fn(&'a str) -> &'static str
+) -> T {
+    
+    let llm_response: String = ai_task_request(
+        msg_context, agent_position, agent_operation, function_pass
+    ).await;
+    
+    // decode into struct
+    let decoded_response: T = serde_json::from_str(llm_response.as_str())
+        .expect("Failed to decode AI response from serde_json");
+    
+    decoded_response
+}
+
+// we need to check that whatever url the llm comes up with does work
+// example: "I need a webserver that fetches fores price data"
+// -> I need to check wether the url I get back actually works
+// Check wether request url is valid
+pub async fn check_status_code(client: &Client, url: &str) -> Result<u16, reqwest::Error> {
+    let response: reqwest::Response = client.get(url).send().await?;
+    Ok(response.status().as_u16())
+}
+
 
 #[cfg(test)]
 mod tests {
