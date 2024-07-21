@@ -95,7 +95,7 @@ pub async fn ai_task_request_decoded<T: DeserializeOwned>(
     decoded_response
 }
 
-// we need to check that whatever url the llm comes up with does work
+// we need to check that wether url the llm comes up with does work
 // example: "I need a webserver that fetches fores price data"
 // -> I need to check wether the url I get back actually works
 // Check wether request url is valid
@@ -104,6 +104,10 @@ pub async fn check_status_code(client: &Client, url: &str) -> Result<u16, reqwes
     Ok(response.status().as_u16())
 }
 
+// some basic functions that allow us to do a few things
+// (1) Get Coce Template
+// -> we're using webserver template from section 7 as basis for llm to use it as a sceleton
+// we need to extract this code as a string and provide it to GPT
 
 #[cfg(test)]
 mod tests {
