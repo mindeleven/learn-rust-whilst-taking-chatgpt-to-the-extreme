@@ -5,6 +5,7 @@ use crate::models::general::llm::{self, Message};
 use crate::helpers::command_line::PrintCommand;
 use serde::de::DeserializeOwned;
 use reqwest::Client;
+use std::fs;
 
 const CODE_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/code_template.rs";
 const EXEC_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/main.rs";
@@ -112,6 +113,10 @@ pub async fn check_status_code(client: &Client, url: &str) -> Result<u16, reqwes
 // (1) Get Code Template
 // -> we're using webserver template from section 7 as basis for llm to use it as a sceleton
 // we need to extract this code as a string and provide it to GPT
+pub fn read_code_template_contents() -> String {
+    let path = String::from(CODE_TEMPLATE_PATH);
+    fs::read_to_string(CODE_TEMPLATE_PATH).expect("Unable to read code template")
+}
 
 // (2) Save new Backend Code
 // once llm get's into write mode we'll need to safe the code created
