@@ -8,7 +8,7 @@ use reqwest::Client;
 use std::fs;
 
 const CODE_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/code_template.rs";
-const EXEC_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/main.rs";
+const EXEC_MAIN_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/main.rs";
 const API_SCHEMA_PATH: &str = "./schemas/api_schema.json";
 
 // appending a string to the and od an ai_function
@@ -120,6 +120,10 @@ pub fn read_code_template_contents() -> String {
 
 // (2) Save new Backend Code
 // once llm get's into write mode we'll need to safe the code created
+pub fn save_backend_code(contents: &String) {
+    let path = String::from(EXEC_MAIN_PATH);
+    fs::write(path, contents).expect("Failed to write main.rs file");
+}
 
 // (3) Save JSON endpoint API schema
 
@@ -169,7 +173,7 @@ mod tests {
         dbg!(code_file);
 
         let exec_file = fs::read_to_string(
-            EXEC_TEMPLATE_PATH
+            EXEC_MAIN_PATH
         )
         .expect("Unable to read file");
         dbg!(exec_file);
