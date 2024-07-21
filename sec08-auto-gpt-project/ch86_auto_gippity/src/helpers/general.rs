@@ -6,6 +6,10 @@ use crate::helpers::command_line::PrintCommand;
 use serde::de::DeserializeOwned;
 use reqwest::Client;
 
+const CODE_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/code_template.rs";
+const EXEC_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/main.rs";
+const API_SCHEMA_PATH: &str = "./schemas/api_schema.json";
+
 // appending a string to the and od an ai_function
 // extend ai function to encourage specific output
 pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -> Message {
@@ -105,9 +109,16 @@ pub async fn check_status_code(client: &Client, url: &str) -> Result<u16, reqwes
 }
 
 // some basic functions that allow us to do a few things
-// (1) Get Coce Template
+// (1) Get Code Template
 // -> we're using webserver template from section 7 as basis for llm to use it as a sceleton
 // we need to extract this code as a string and provide it to GPT
+
+// (2) Save new Backend Code
+// once llm get's into write mode we'll need to safe the code created
+
+// (3) Save JSON endpoint API schema
+
+
 
 #[cfg(test)]
 mod tests {
@@ -141,4 +152,28 @@ mod tests {
 
         dbg!(res);
     }
+
+    // cargo test tests_code_template_path -- --nocapture
+    #[test]
+    fn tests_code_template_path() {
+        use std::fs;
+        let code_file = fs::read_to_string(
+            CODE_TEMPLATE_PATH
+        )
+        .expect("Unable to read file");
+        dbg!(code_file);
+
+        let exec_file = fs::read_to_string(
+            EXEC_TEMPLATE_PATH
+        )
+        .expect("Unable to read file");
+        dbg!(exec_file);
+
+        let schema_file = fs::read_to_string(
+            API_SCHEMA_PATH
+        )
+        .expect("Unable to read file");
+        dbg!(schema_file);
+    }
+    
 }
