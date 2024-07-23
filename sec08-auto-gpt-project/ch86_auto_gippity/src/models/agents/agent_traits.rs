@@ -8,6 +8,8 @@ use serde::{ Deserialize, Serialize };
 use std::fmt::Debug;
 
 // how does the schema for the api endpoints that we expect look like?
+// do get a better understanding of what this struct is doing, have a look at
+// ai_functions::aifunc_backend::print_rest_api_endpoints
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct RouteObject {
     is_route_dynamic: String,
@@ -31,7 +33,7 @@ pub struct FactSheet {
     // when we first create the project the scope will be None
     // when we get the project it will be some
     pub project_scope: Option<ProjectScope>,
-    pub external_urls: String,
-    pub backend_code: String,
-    pub api_endpoint_schema: String,
+    pub external_urls: Option<Vec<String>>,
+    pub backend_code: Option<String>,
+    pub api_endpoint_schema: Option<Vec<RouteObject>>,
 }
