@@ -27,6 +27,8 @@ pub struct ProjectScope {
 }
 
 // building the fact sheet 
+// fact sheet can be passed from managing agent to the subordinated agents
+// and get updated by these agents (solutions + backend)
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct FactSheet {
     pub project_description: String,
