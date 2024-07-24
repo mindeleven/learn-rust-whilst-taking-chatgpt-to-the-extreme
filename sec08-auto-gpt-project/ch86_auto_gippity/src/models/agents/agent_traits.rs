@@ -3,7 +3,7 @@
 // managing agents only will work with agents who have these special traits
 
 use crate::models::agent_basic::basic_agent::BasicAgent;
-// use async_trait::async_trait; // most likely not needed in this Rust version
+use async_trait::async_trait; // most likely not needed in this Rust version
 use serde::{ Deserialize, Serialize };
 use std::fmt::Debug;
 
@@ -41,6 +41,7 @@ pub struct FactSheet {
 }
 
 // special powers for the agents
+#[async_trait]
 pub trait SpecialFunctions: Debug { // trait needs to have Debug
     // function used by the managing agent
     // so that manager can get attributes from the Agents
