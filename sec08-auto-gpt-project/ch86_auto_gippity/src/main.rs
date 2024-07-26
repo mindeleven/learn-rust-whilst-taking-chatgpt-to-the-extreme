@@ -1,10 +1,18 @@
 /// GPT Chat Completions API
 /// https://platform.openai.com/docs/guides/text-generation/chat-completions-api
+#[macro_export]
+macro_rules! get_function_string {
+    ($func: ident) => {{
+        stringify!($func)
+    }};
+}
 
+#[macro_use]
 mod ai_functions;
 mod apis;
 mod helpers;
 mod models;
+
 
 use helpers::command_line::get_user_response;
 
