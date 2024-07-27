@@ -107,11 +107,62 @@ impl SpecialFunctions for AgentSolutionArchitect {
                         ).await;
                         self.attributes.state = AgentState::UnitTesting;
                     }
-
                 },
                 AgentState::UnitTesting => {
+                    // unit testing for the solutions architect is about testing
+                    // that the urls from the Discovery phase are actually working
+                    let mut exclude_urls: Vec<String> = vec![];
+
+                    let client = Client::builder()
+                        .timeout(Duration::from_secs(5))
+                        .build()
+                        .unwrap();
+
+                    // find faulty urls
+                    let urls: &Vec<String> = factsheet
+                        .external_urls.as_ref().expect("No URL object on factsheet");
+
+                    // finding the faulty urls
+                    for url in urls {
+                        let endpoint_str = format!("Testing URL endpoint {}", url);
+                        PrintCommand::UnitTest.print_agent_message(
+                            self.attributes.position.as_str(),
+                            endpoint_str.as_str()
+                        );
+
+                        // perform URL test
+                        match check_status_code(&client, url).await {
+                            Ok(status_code) => {
+                                if status_code != 200 {
+                                    exclude_urls.push(url.clone())
+                                }
+                            },
+                            Err(e) => {
+                                println!("Error checking {}: {}", url, e);
+                            }
+
+                        }                        
+                    }
+
+                    // exclude any faulty urls
+                    if exclude_urls.len() > 0 {
+                        let new_urls: Vec<String> = factsheet
+                            .external_urls
+                            .as_ref()
+                            .unwrap()
+                            .iter()
+                            .filter(|url| !exclude_urls.contains(&url))
+                            .cloned()
+                            .collect();
+
+                        factsheet.external_urls = Some(new_urls);
+                    }
+
+                    // confirm done
+                    self.attributes.state = AgentState::Finished;
 
                 },
+                // default to finished state
                 _ => {
                     self.attributes.state = AgentState::Finished;
                 }
