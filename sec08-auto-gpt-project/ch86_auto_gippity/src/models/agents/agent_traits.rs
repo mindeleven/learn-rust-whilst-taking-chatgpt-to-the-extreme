@@ -21,9 +21,9 @@ pub struct RouteObject {
 // the struct we expect the llm to return ??? (needs clarification)
 #[derive(Debug, Clone, Copy, Deserialize, Serialize, PartialEq)]
 pub struct ProjectScope {
-    is_crud_required: bool,
-    is_user_login_and_logout: bool,
-    is_external_urls_required: bool,
+    pub is_crud_required: bool,
+    pub is_user_login_and_logout: bool,
+    pub is_external_urls_required: bool,
 }
 
 // building the fact sheet 
