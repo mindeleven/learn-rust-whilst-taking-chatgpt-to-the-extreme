@@ -15,7 +15,6 @@ use crate::models::agents::agent_traits::{
 use async_trait::async_trait;
 use reqwest::Client;
 use std::fmt::format;
-use std::path::Prefix;
 use std::time::Duration;
 
 // creating the Solutions Architect
@@ -172,4 +171,18 @@ impl SpecialFunctions for AgentSolutionArchitect {
         Ok(())
     }
 
+}
+
+/// Writing unit test for the solutions architect
+#[cfg(test)]
+mod test {
+    use super::*;
+    
+    // cargo test tests_solution_architect -- --nocapture
+    #[tokio::test]
+    async fn tests_solution_architect() {
+        let mut agent = AgentSolutionArchitect::new();
+
+        dbg!(agent);
+    }
 }
