@@ -183,6 +183,17 @@ mod test {
     async fn tests_solution_architect() {
         let mut agent = AgentSolutionArchitect::new();
 
+        // the factsheet comes from the managing agent but as we don't have a 
+        // managing agent here, a dummy fact sheet needs to be created
+        let mut factsheet: FactSheet = FactSheet {
+            project_description: "Build a full stack website with user login and logout that shows latest Forex prices".to_string(),
+            project_scope: None,
+            external_urls: None,
+            backend_code: None,
+            api_endpoint_schema: None,
+        };
+
         dbg!(agent);
+        dbg!(factsheet);
     }
 }
