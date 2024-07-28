@@ -193,7 +193,10 @@ mod test {
             api_endpoint_schema: None,
         };
 
-        dbg!(agent);
+        agent.execute(&mut factsheet).await.expect("Unable to execute Solution Architect Agent!");
+        assert!(factsheet.project_scope != None);
+        assert!(factsheet.external_urls.is_some());
+
         dbg!(factsheet);
     }
 }
