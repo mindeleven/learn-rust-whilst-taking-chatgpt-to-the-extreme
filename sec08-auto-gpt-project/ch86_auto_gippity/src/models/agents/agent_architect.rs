@@ -14,13 +14,12 @@ use crate::models::agents::agent_traits::{
 
 use async_trait::async_trait;
 use reqwest::Client;
-use std::fmt::format;
 use std::time::Duration;
 
 // creating the Solutions Architect
 #[derive(Debug)]
-struct AgentSolutionArchitect {
-    attributes: BasicAgent,
+pub struct AgentSolutionArchitect {
+    pub attributes: BasicAgent,
 }
 
 impl AgentSolutionArchitect {
