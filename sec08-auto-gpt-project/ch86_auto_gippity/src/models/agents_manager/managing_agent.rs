@@ -62,4 +62,39 @@ impl ManagingAgent {
         // ! TODO add backend agent
     }
 
+    pub async fn execute_project(&mut self) {
+        self.create_agents();
+
+        for agent in &mut self.agents {
+            let agent_res: Result<(), Box<dyn std::error::Error>> 
+                = agent.execute(&mut self.factsheet).await;
+
+            let agent_info = agent.get_attributes_from_agent();
+            dbg!(agent_info);
+        }
+    }
+
+}
+
+
+/// Writing unit test for the managing agent
+#[cfg(test)]
+mod test {
+    use super::*;
+    
+    // cargo test tests_managing_architect -- --nocapture
+    #[tokio::test]
+    async fn tests_managing_architect() {
+        let usr_request: &str 
+            = "need a full stack app that fetches and tracks my fitness progress. Needs to include timezone info from the web.";
+        
+        let mut managing_agent: ManagingAgent = 
+            ManagingAgent::new(usr_request.to_string())
+                .await
+                .expect("Error creating Managing Agent");
+
+        managing_agent.execute_project().await;
+
+        dbg!(managing_agent.factsheet);
+    }
 }
