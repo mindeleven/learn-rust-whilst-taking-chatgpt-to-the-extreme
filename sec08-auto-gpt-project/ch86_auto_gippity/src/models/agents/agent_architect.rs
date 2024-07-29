@@ -23,7 +23,7 @@ pub struct AgentSolutionArchitect {
 }
 
 impl AgentSolutionArchitect {
-    fn new() -> Self {
+    pub fn new() -> Self {
         let attributes = BasicAgent {
             objective: "Gathers information and design solutions for website development".to_string(),
             position: "Solutions Architect".to_string(),
