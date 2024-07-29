@@ -63,4 +63,24 @@ impl AgentBackendDeveloper {
         factsheet.backend_code = Some(ai_response);
 
     }
+
+    async fn call_improved_backend_code(&self, factsheet: &mut FactSheet) {
+        // concatenate instruction
+        // improved backend code is stored in memory in the factsheet
+        let mut msg_context: String = format!(
+            "CODE TEMPLATE: {:?} \n PROJECT DESCRIPTION: {:?} \n",
+            factsheet.backend_code, factsheet
+        );
+
+        let ai_response = ai_task_request(
+            msg_context,
+            &self.attributes.position,
+            get_function_string!(print_improved_webserver_code),
+            print_improved_webserver_code
+        ).await;
+
+        save_backend_code(&ai_response);
+        factsheet.backend_code = Some(ai_response);
+
+    }
 }
