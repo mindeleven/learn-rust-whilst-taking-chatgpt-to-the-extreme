@@ -52,4 +52,14 @@ impl ManagingAgent {
             agents
         })
     }
+
+    pub fn add_agent(&mut self, agent: Box<dyn SpecialFunctions>) {
+        self.agents.push(agent);
+    }
+
+    fn create_agents(&mut self) {
+        self.add_agent(Box::new(AgentSolutionArchitect::new()));
+        // ! TODO add backend agent
+    }
+
 }
