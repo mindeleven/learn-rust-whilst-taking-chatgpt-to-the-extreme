@@ -82,9 +82,9 @@ impl ManagingAgent {
 mod test {
     use super::*;
     
-    // cargo test tests_managing_architect -- --nocapture
+    // cargo test tests_managing_agent -- --nocapture
     #[tokio::test]
-    async fn tests_managing_architect() {
+    async fn tests_managing_agent() {
         let usr_request: &str 
             = "need a full stack app that fetches and tracks my fitness progress. Needs to include timezone info from the web.";
         
