@@ -106,7 +106,7 @@ impl AgentBackendDeveloper {
     }
     
     async fn call_extract_rest_api_endpoints(&self) -> String {
-        // getting code what's inside main.rs file
+        // getting code that's inside main.rs file
         // getting it from file instead of factsheet because from factsheet 
         // means less expensive llm connections (-> cheaper)
         let backend_code = read_exec_main_contents();
@@ -125,3 +125,47 @@ impl AgentBackendDeveloper {
     }
 
 }
+
+// implementing special functions for the backend developer
+#[async_trait]
+impl SpecialFunctions for AgentBackendDeveloper {
+
+    fn get_attributes_from_agent(&self) -> &BasicAgent {
+        // returning all the information about this agent
+        &self.attributes
+    }
+
+    async fn execute(
+        &mut self, 
+        factsheet: &mut FactSheet
+    ) -> Result<(), Box<dyn std::error::Error>> {
+
+        while self.attributes.state != AgentState::Finished {
+            
+            match self.attributes.state {
+                AgentState::Discovery => {
+                    self.call_initial_backend_code(factsheet).await;
+                    self.attributes.state = AgentState::Working;
+                    continue;
+                },
+                AgentState::Working => {
+                    if self.bug_count == 0 {
+                        self.call_improved_backend_code(factsheet).await;
+                        self.attributes.state = AgentState::UnitTesting;
+                        continue;
+                    } else {
+                        self.call_fix_code_bugs(factsheet).await;
+                        self.attributes.state = AgentState::UnitTesting;
+                        continue;
+                    }
+                },
+                AgentState::UnitTesting => {},
+                _ => {}
+            }
+        }
+
+        unimplemented!()
+    
+    }
+}
+
