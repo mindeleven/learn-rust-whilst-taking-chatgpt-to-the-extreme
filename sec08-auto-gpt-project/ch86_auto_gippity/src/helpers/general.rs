@@ -22,7 +22,8 @@ pub fn extend_ai_function(ai_func: fn(&str) -> &'static str, func_input: &str) -
     let msg: String = format!("FUNCTION: {}
     INSTRUCTION: You are a function printer. You only print the results of functions.
     Nothing else. No commentary. Here is the input to the function {}.
-    Print out what the function will return.",
+    Print out what the function will return. 
+    Don't put Rust code in markdown code blocks.",
     ai_function_str, func_input);
     // "Hopefully this is starting to make sense", Shaun just said
     
