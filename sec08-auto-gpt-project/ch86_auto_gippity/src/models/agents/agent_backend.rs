@@ -159,13 +159,87 @@ impl SpecialFunctions for AgentBackendDeveloper {
                         continue;
                     }
                 },
-                AgentState::UnitTesting => {},
+                AgentState::UnitTesting => {
+                    // setting the agent state to finished to make sure 
+                    // we're not running into an infinite loop
+                    self.attributes.state = AgentState::Finished;
+                },
                 _ => {}
             }
         }
-
-        unimplemented!()
-    
+        Ok(())
     }
 }
 
+/// Writing unit test for the backend developer
+#[cfg(test)]
+mod test {
+    use super::*;
+    
+    // cargo test tests_writing_backend_code -- --nocapture
+    #[tokio::test]
+    async fn tests_writing_backend_code() {
+        
+        let mut agent = AgentBackendDeveloper::new();
+
+        // creating a raw string for the factsheet
+        // factsheet code is created by running a test on GPT with
+        // cargo test tests_managing_agent -- --nocapture
+        // "project_description": "build a website that fetches and tracks fitness progress and includes timezone information from the web",
+        /*
+EXAMPLE 1 //////////
+{
+    "project_description": "build a website that only tracks and returns the time of the day",
+    "project_scope": {
+        "is_crud_required": false,
+        "is_user_login_and_logout": false,
+        "is_external_urls_required": false
+    },
+    "external_urls": [],
+    "backend_code": null,
+    "api_endpoint_schema": null
+}
+EXAMPLE 2 //////////
+{
+    "project_description": "build a website that fetches and tracks fitness progress and includes timezone information from the web",
+    "project_scope": {
+        "is_crud_required": true,
+        "is_user_login_and_logout": true,
+        "is_external_urls_required": true
+    },
+    "external_urls": [
+        "https://worldtimeapi.org/api/timezone",
+        "https://wger.de/api/v2/exerciseinfo/"
+    ],
+    "backend_code": null,
+    "api_endpoint_schema": null
+}
+        */
+        let factsheet_str = r#"
+            {
+                "project_description": "build a website that fetches and tracks fitness progress and includes timezone information from the web",
+                "project_scope": {
+                    "is_crud_required": true,
+                    "is_user_login_and_logout": true,
+                    "is_external_urls_required": true
+                },
+                "external_urls": [
+                    "https://worldtimeapi.org/api/timezone",
+                    "https://wger.de/api/v2/exerciseinfo/"
+                ],
+                "backend_code": null,
+                "api_endpoint_schema": null
+            }
+        "#;
+
+        let mut factsheet: FactSheet = serde_json::from_str(factsheet_str).unwrap();
+
+        agent.execute(&mut factsheet)
+            .await
+            .expect("Failed to execute Backend Developer Agent");
+        
+        // dbg!(factsheet);
+
+    }
+}
+    
