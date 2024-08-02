@@ -8,6 +8,7 @@ use reqwest::Client;
 use std::fs;
 
 const CODE_TEMPLATE_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/code_template.rs";
+pub const WEB_SERVER_PROJECT_PATH: &str = "../../sec07-web-server-template/ch74_web_template/";
 const EXEC_MAIN_PATH: &str = "../../sec07-web-server-template/ch74_web_template/src/main.rs";
 const API_SCHEMA_PATH: &str = "./schemas/api_schema.json";
 
