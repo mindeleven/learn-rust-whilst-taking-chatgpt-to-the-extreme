@@ -8,7 +8,7 @@ use crate::helpers::general::{
     save_api_endpoints, save_backend_code
 };
 
-use crate::helpers::command_line::PrintCommand;
+use crate::helpers::command_line::{ PrintCommand, confirm_safe_code };
 use crate::helpers::general::ai_task_request;
 use crate::models::agent_basic::basic_agent::{ AgentState, BasicAgent };
 use crate::models::agents::agent_traits::{ FactSheet, RouteObject, SpecialFunctions };
@@ -160,6 +160,24 @@ impl SpecialFunctions for AgentBackendDeveloper {
                     }
                 },
                 AgentState::UnitTesting => {
+                    // the code created by the llm is going to get executed on this machine
+                    // this might cause harm because of renegade AI, you know
+                    // so a warning is needed and the code needs to get reviewed 
+                    // before it's allowed to get executed
+                    // command_line.rs => confirm safe code
+
+                    // Guard: ENSURE AI SAFETY
+                    PrintCommand::UnitTest.print_agent_message(
+                        self.attributes.position.as_str(),
+                        "Backend Code Unit Testing: Requesting user input to ensure safe code");
+                    
+                    let is_safe_code = confirm_safe_code();
+
+                    if !is_safe_code {
+                        // yayyy, renagade AI! Panic in the streets of London...
+                        panic!("Better go work on some AI alignment instead...");
+                    }
+
                     // setting the agent state to finished to make sure 
                     // we're not running into an infinite loop
                     self.attributes.state = AgentState::Finished;
