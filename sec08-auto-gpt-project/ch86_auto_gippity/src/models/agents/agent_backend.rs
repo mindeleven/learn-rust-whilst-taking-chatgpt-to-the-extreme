@@ -5,7 +5,7 @@ use crate::ai_functions::aifunc_backend::{
 };
 use crate::helpers::general::{
     check_status_code, read_code_template_contents, read_exec_main_contents,
-    save_api_endpoints, save_backend_code
+    save_api_endpoints, save_backend_code, WEB_SERVER_PROJECT_PATH
 };
 
 use crate::helpers::command_line::{ PrintCommand, confirm_safe_code };
@@ -16,6 +16,7 @@ use crate::models::agents::agent_traits::{ FactSheet, RouteObject, SpecialFuncti
 use async_trait::async_trait;
 use reqwest::Client;
 use std::process::{ Command, Stdio };
+use std::thread::panicking;
 use std::time::Duration;
 use tokio::time;
 
@@ -176,6 +177,51 @@ impl SpecialFunctions for AgentBackendDeveloper {
                     if !is_safe_code {
                         // yayyy, renagade AI! Panic in the streets of London...
                         panic!("Better go work on some AI alignment instead...");
+                    }
+
+                    // no panic?
+                    // so it's time to build and test code
+                    PrintCommand::UnitTest.print_agent_message(
+                        self.attributes.position.as_str(),
+                        "Backend Code Unit Testing: building project...");
+                    
+                    // build code
+                    let build_backend_server: std::process::Output = Command::new("cargo")
+                        .arg("build")
+                        .current_dir(WEB_SERVER_PROJECT_PATH)
+                        .stdout(Stdio::piped())
+                        .stderr(Stdio::piped())
+                        .output()
+                        .expect("Failed to run backend application");
+
+                    // determine if build errors
+                    if build_backend_server.status.success() {
+                        self.bug_count = 0;
+                        PrintCommand::UnitTest.print_agent_message(
+                            self.attributes.position.as_str(),
+                            "Backend Code Unit Testing: Test server build successful");
+                    } else {
+                        let error_arr = build_backend_server.stderr;
+                        let error_str = String::from_utf8(error_arr).unwrap();
+
+                        // update error stats
+                        self.bug_count += 1;
+                        self.bug_errors = Some(error_str);
+
+                        // exit if too many bugs
+                        if self.bug_count > 2 {
+                            PrintCommand::Issue.print_agent_message(
+                                self.attributes.position.as_str(),
+                                "Backend Code Unit Testing: Too many bugs found in code");
+                            panic!("Error: Too many bugs");
+                        }
+
+                        // pass back for rework
+                        // bug_count is > 0, so we go into 
+                        // self.call_fix_code_bugs(factsheet).await;
+                        // under AgentState::Working
+                        self.attributes.state = AgentState::Working;
+                        continue;
                     }
 
                     // setting the agent state to finished to make sure 
