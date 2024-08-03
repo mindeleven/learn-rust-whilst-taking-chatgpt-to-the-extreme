@@ -12,10 +12,10 @@ use std::fmt::Debug;
 // ai_functions::aifunc_backend::print_rest_api_endpoints
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq)]
 pub struct RouteObject {
-    is_route_dynamic: String,
-    method: String,
-    request_body: serde_json::Value,
-    route: String,
+    pub is_route_dynamic: String,
+    pub method: String,
+    pub request_body: serde_json::Value,
+    pub route: String,
 }
 
 // the struct we expect the llm to return ??? (needs clarification)
