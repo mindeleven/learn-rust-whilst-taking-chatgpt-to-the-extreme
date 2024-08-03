@@ -192,7 +192,7 @@ impl SpecialFunctions for AgentBackendDeveloper {
                         .stdout(Stdio::piped())
                         .stderr(Stdio::piped())
                         .output()
-                        .expect("Failed to run backend application");
+                        .expect("Failed to build backend application");
 
                     // determine if build errors
                     if build_backend_server.status.success() {
@@ -223,6 +223,56 @@ impl SpecialFunctions for AgentBackendDeveloper {
                         self.attributes.state = AgentState::Working;
                         continue;
                     }
+
+                    /*
+                        Extract and test REST API endpoints
+                    */
+
+                    // extract API Endpoints
+                    let api_endpoints_str = self.call_extract_rest_api_endpoints().await;
+
+                    // turn API endpoints into values
+                    let api_endpoints: Vec<RouteObject> =
+                        serde_json::from_str(api_endpoints_str.as_str())
+                            .expect("Failed to decode API endpoints");
+                    
+                    // define endpoint to check
+                    // filter in only the endpoints that don't have dynamic routes
+                    // these are endpoints that are just GET endpoints
+                    let check_endpoints: Vec<RouteObject> = api_endpoints
+                        .iter()
+                        .filter(|&route_object| {
+                            route_object.method == "get" && route_object.is_route_dynamic == "false"
+                        })
+                        .cloned()
+                        .collect();
+
+                    // store API endpoints
+                    factsheet.api_endpoint_schema = Some(check_endpoints.clone());
+                    
+                    // run backend application
+                    // building the webserver
+                    // spawn a thread, run the webserver
+                    PrintCommand::UnitTest.print_agent_message(
+                        self.attributes.position.as_str(),
+                        "Backend Code Unit Testing: Starting web server");
+                    
+                    // Execute running server
+                    let run_backend_server: std::process::Output = Command::new("cargo")
+                        .arg("run")
+                        .current_dir(WEB_SERVER_PROJECT_PATH)
+                        .stdout(Stdio::piped())
+                        .stderr(Stdio::piped())
+                        .output()
+                        .expect("Failed to run backend application");
+                    
+                    // Let user know testing on server will take place soon
+                    PrintCommand::UnitTest.print_agent_message(
+                        self.attributes.position.as_str(),
+                        "Backend Code Unit Testing: Launching test on server in 5 seconds....");
+                    
+                    let seconds_sleep: Duration = Duration::from_secs(5);
+                    time::sleep(seconds_sleep).await;
 
                     // setting the agent state to finished to make sure 
                     // we're not running into an infinite loop
