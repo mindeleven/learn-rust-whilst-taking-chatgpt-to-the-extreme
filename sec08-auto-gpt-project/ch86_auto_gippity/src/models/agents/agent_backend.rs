@@ -323,7 +323,17 @@ impl SpecialFunctions for AgentBackendDeveloper {
                             }
                         }
                     }
+                    
+                    save_api_endpoints(&api_endpoints_str);
 
+                    PrintCommand::UnitTest.print_agent_message(
+                        self.attributes.position.as_str(),
+                        "Backend testing complete...."
+                    );
+
+                    run_backend_server
+                        .kill()
+                        .expect("Failed to kill backend web server on completion");
 
                     // setting the agent state to finished to make sure 
                     // we're not running into an infinite loop
