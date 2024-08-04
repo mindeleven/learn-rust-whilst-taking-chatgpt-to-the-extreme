@@ -1,19 +1,25 @@
 use actix_cors::Cors;
+
 use actix_web::{http::header, web, App, HttpServer, Responder, HttpResponse};
+
 use serde::{Deserialize, Serialize};
+
 use reqwest::Client as HttpClient;
+
 use async_trait::async_trait;
+
 use std::sync::Mutex;
 use std::collections::HashMap;
 use std::fs;
 use std::io::Write;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
-struct FitnessProgress {
+struct FitnessData {
     id: u64,
     user_id: u64,
-    date: String,
-    progress: String,
+    activity: String,
+    duration: u64,
+    timestamp: String,
     timezone: String,
 }
 
@@ -26,40 +32,40 @@ struct User {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Database {
-    progress: HashMap<u64, FitnessProgress>,
+    fitness_data: HashMap<u64, FitnessData>,
     users: HashMap<u64, User>,
 }
 
 impl Database {
     fn new() -> Self {
         Self {
-            progress: HashMap::new(),
+            fitness_data: HashMap::new(),
             users: HashMap::new(),
         }
     }
 
-    // CRUD for FitnessProgress
-    fn insert_progress(&mut self, progress: FitnessProgress) {
-        self.progress.insert(progress.id, progress);
+    // CRUD DATA
+    fn insert_fitness_data(&mut self, data: FitnessData) {
+        self.fitness_data.insert(data.id, data);
     }
 
-    fn get_progress(&self, id: &u64) -> Option<&FitnessProgress> {
-        self.progress.get(id)
+    fn get_fitness_data(&self, id: &u64) -> Option<&FitnessData> {
+        self.fitness_data.get(id)
     }
 
-    fn get_all_progress(&self) -> Vec<&FitnessProgress> {
-        self.progress.values().collect()
+    fn get_all_fitness_data(&self) -> Vec<&FitnessData> {
+        self.fitness_data.values().collect()
     }
 
-    fn delete_progress(&mut self, id: &u64) {
-        self.progress.remove(id);
+    fn delete_fitness_data(&mut self, id: &u64) {
+        self.fitness_data.remove(id);
     }
 
-    fn update_progress(&mut self, progress: FitnessProgress) {
-        self.progress.insert(progress.id, progress);
+    fn update_fitness_data(&mut self, data: FitnessData) {
+        self.fitness_data.insert(data.id, data);
     }
 
-    // CRUD for User
+    // USER DATA RELATED FUNCTIONS
     fn insert_user(&mut self, user: User) {
         self.users.insert(user.id, user);
     }
@@ -85,39 +91,40 @@ impl Database {
 
 struct AppState {
     db: Mutex<Database>,
+    http_client: HttpClient,
 }
 
-async fn create_progress(app_state: web::Data<AppState>, progress: web::Json<FitnessProgress>) -> impl Responder {
+async fn create_fitness_data(app_state: web::Data<AppState>, data: web::Json<FitnessData>) -> impl Responder {
     let mut db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
-    db.insert_progress(progress.into_inner());
+    db.insert_fitness_data(data.into_inner());
     let _ = db.save_to_file();
     HttpResponse::Ok().finish()
 }
 
-async fn read_progress(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
+async fn read_fitness_data(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
     let db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
-    match db.get_progress(&id.into_inner()) {
-        Some(progress) => HttpResponse::Ok().json(progress),
+    match db.get_fitness_data(&id.into_inner()) {
+        Some(data) => HttpResponse::Ok().json(data),
         None => HttpResponse::NotFound().finish(),
     }
 }
 
-async fn read_all_progress(app_state: web::Data<AppState>) -> impl Responder {
+async fn read_all_fitness_data(app_state: web::Data<AppState>) -> impl Responder {
     let db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
-    let progress = db.get_all_progress();
-    HttpResponse::Ok().json(progress)
+    let data = db.get_all_fitness_data();
+    HttpResponse::Ok().json(data)
 }
 
-async fn update_progress(app_state: web::Data<AppState>, progress: web::Json<FitnessProgress>) -> impl Responder {
+async fn update_fitness_data(app_state: web::Data<AppState>, data: web::Json<FitnessData>) -> impl Responder {
     let mut db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
-    db.update_progress(progress.into_inner());
+    db.update_fitness_data(data.into_inner());
     let _ = db.save_to_file();
     HttpResponse::Ok().finish()
 }
 
-async fn delete_progress(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
+async fn delete_fitness_data(app_state: web::Data<AppState>, id: web::Path<u64>) -> impl Responder {
     let mut db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
-    db.delete_progress(&id.into_inner());
+    db.delete_fitness_data(&id.into_inner());
     let _ = db.save_to_file();
     HttpResponse::Ok().finish()
 }
@@ -132,34 +139,25 @@ async fn register(app_state: web::Data<AppState>, user: web::Json<User>) -> impl
 async fn login(app_state: web::Data<AppState>, user: web::Json<User>) -> impl Responder {
     let db: std::sync::MutexGuard<Database> = app_state.db.lock().unwrap();
     match db.get_user_by_name(&user.username) {
-        Some(stored_user) if stored_user.password == user.password => HttpResponse::Ok().body("Logged in!"),
+        Some(stored_user) if stored_user.password == user.password => {
+            HttpResponse::Ok().body("Logged in!")
+        }
         _ => HttpResponse::BadRequest().body("Invalid username or password"),
     }
 }
 
-#[async_trait]
-trait ExternalApi {
-    async fn fetch_timezone(&self, timezone: &str) -> Result<String, reqwest::Error>;
-    async fn fetch_exercise_info(&self, exercise_id: u64) -> Result<String, reqwest::Error>;
+async fn fetch_timezone(http_client: &HttpClient, timezone: &str) -> Result<String, reqwest::Error> {
+    let url = format!("https://worldtimeapi.org/api/timezone/{}", timezone);
+    let response = http_client.get(&url).send().await?;
+    let json: serde_json::Value = response.json().await?;
+    Ok(json["datetime"].as_str().unwrap_or_default().to_string())
 }
 
-struct ApiClient {
-    client: HttpClient,
-}
-
-#[async_trait]
-impl ExternalApi for ApiClient {
-    async fn fetch_timezone(&self, timezone: &str) -> Result<String, reqwest::Error> {
-        let url = format!("https://worldtimeapi.org/api/timezone/{}", timezone);
-        let response = self.client.get(&url).send().await?.text().await?;
-        Ok(response)
-    }
-
-    async fn fetch_exercise_info(&self, exercise_id: u64) -> Result<String, reqwest::Error> {
-        let url = format!("https://wger.de/api/v2/exerciseinfo/{}", exercise_id);
-        let response = self.client.get(&url).send().await?.text().await?;
-        Ok(response)
-    }
+async fn fetch_exercise_info(http_client: &HttpClient, exercise_id: u64) -> Result<serde_json::Value, reqwest::Error> {
+    let url = format!("https://wger.de/api/v2/exerciseinfo/{}", exercise_id);
+    let response = http_client.get(&url).send().await?;
+    let json: serde_json::Value = response.json().await?;
+    Ok(json)
 }
 
 #[actix_web::main]
@@ -171,6 +169,7 @@ async fn main() -> std::io::Result<()> {
 
     let data: web::Data<AppState> = web::Data::new(AppState {
         db: Mutex::new(db),
+        http_client: HttpClient::new(),
     });
 
     HttpServer::new(move || {
@@ -187,11 +186,11 @@ async fn main() -> std::io::Result<()> {
                     .max_age(3600),
             )
             .app_data(data.clone())
-            .route("/progress", web::post().to(create_progress))
-            .route("/progress", web::get().to(read_all_progress))
-            .route("/progress", web::put().to(update_progress))
-            .route("/progress/{id}", web::get().to(read_progress))
-            .route("/progress/{id}", web::delete().to(delete_progress))
+            .route("/fitness_data", web::post().to(create_fitness_data))
+            .route("/fitness_data", web::get().to(read_all_fitness_data))
+            .route("/fitness_data", web::put().to(update_fitness_data))
+            .route("/fitness_data/{id}", web::get().to(read_fitness_data))
+            .route("/fitness_data/{id}", web::delete().to(delete_fitness_data))
             .route("/register", web::post().to(register))
             .route("/login", web::post().to(login))
     })

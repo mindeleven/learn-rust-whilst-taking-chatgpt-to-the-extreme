@@ -1,52 +1,62 @@
 [
   {
-    "route": "/task",
+    "route": "/fitness_data",
     "is_route_dynamic": "false",
     "method": "post",
     "request_body": {
       "id": "number",
-      "name": "string",
-      "completed": "bool"
+      "user_id": "number",
+      "activity": "string",
+      "duration": "number",
+      "timestamp": "string",
+      "timezone": "string"
     },
     "response": "None"
   },
   {
-    "route": "/task",
+    "route": "/fitness_data",
     "is_route_dynamic": "false",
     "method": "get",
     "request_body": "None",
-    "response": [
-      {
-        "id": "number",
-        "name": "string",
-        "completed": "bool"
-      }
-    ]
+    "response": {
+      "id": "number",
+      "user_id": "number",
+      "activity": "string",
+      "duration": "number",
+      "timestamp": "string",
+      "timezone": "string"
+    }
   },
   {
-    "route": "/task",
+    "route": "/fitness_data",
     "is_route_dynamic": "false",
     "method": "put",
     "request_body": {
       "id": "number",
-      "name": "string",
-      "completed": "bool"
+      "user_id": "number",
+      "activity": "string",
+      "duration": "number",
+      "timestamp": "string",
+      "timezone": "string"
     },
     "response": "None"
   },
   {
-    "route": "/task/{id}",
+    "route": "/fitness_data/{id}",
     "is_route_dynamic": "true",
     "method": "get",
     "request_body": "None",
     "response": {
       "id": "number",
-      "name": "string",
-      "completed": "bool"
+      "user_id": "number",
+      "activity": "string",
+      "duration": "number",
+      "timestamp": "string",
+      "timezone": "string"
     }
   },
   {
-    "route": "/task/{id}",
+    "route": "/fitness_data/{id}",
     "is_route_dynamic": "true",
     "method": "delete",
     "request_body": "None",
