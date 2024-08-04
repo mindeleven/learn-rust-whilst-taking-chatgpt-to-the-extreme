@@ -123,7 +123,7 @@ pub fn read_code_template_contents() -> String {
 // get exec main template
 pub fn read_exec_main_contents() -> String {
     let path = String::from(EXEC_MAIN_PATH);
-    fs::read_to_string(CODE_TEMPLATE_PATH).expect("Unable to exec main template")
+    fs::read_to_string(EXEC_MAIN_PATH).expect("Unable to exec main template")
 }
 
 // (2) Save new Backend Code
