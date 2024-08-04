@@ -112,6 +112,7 @@ impl AgentBackendDeveloper {
         // getting it from file instead of factsheet because from factsheet 
         // means less expensive llm connections (-> cheaper)
         let backend_code = read_exec_main_contents();
+        // dbg!(&backend_code);
 
         // structure message context
         let msg_context: String = format!("CODE_INPUT: {}", backend_code);
@@ -278,6 +279,8 @@ impl SpecialFunctions for AgentBackendDeveloper {
                     // Check status code
                     for endpoint in check_endpoints {
 
+                        // dbg!(&endpoint);
+
                         // confirm URL testing
                         // testing endpoint to know which endpoints are actually called on 
                         // our backend server
@@ -390,7 +393,8 @@ EXAMPLE 2 //////////
     "api_endpoint_schema": null
 }
         */
-        let factsheet_str = r#"
+
+        let _project_example_1 = r#"
             {
                 "project_description": "build a website that fetches and tracks fitness progress and includes timezone information from the web",
                 "project_scope": {
@@ -407,11 +411,30 @@ EXAMPLE 2 //////////
             }
         "#;
 
+        let _project_example_2 = r#"
+            {
+                "project_description": "build a website that only tracks and returns the time of the day",
+                "project_scope": {
+                    "is_crud_required": false,
+                    "is_user_login_and_logout": false,
+                    "is_external_urls_required": false
+                },
+                "external_urls": [],
+                "backend_code": null,
+                "api_endpoint_schema": null
+            }
+        "#;
+
+        let factsheet_str = _project_example_1;
+
         let mut factsheet: FactSheet = serde_json::from_str(factsheet_str).unwrap();
         
         // set the agent state to unit testing to jump into the 
         // AgentState::UnitTesting of the execute while loop
-        agent.attributes.state = AgentState::UnitTesting;
+        // agent.attributes.state = AgentState::UnitTesting;
+        // if we want to run the complete code 
+        // set agent state back to AgentState::Discovery
+        agent.attributes.state = AgentState::Discovery;
 
         agent.execute(&mut factsheet)
             .await
