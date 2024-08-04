@@ -408,6 +408,10 @@ EXAMPLE 2 //////////
         "#;
 
         let mut factsheet: FactSheet = serde_json::from_str(factsheet_str).unwrap();
+        
+        // set the agent state to unit testing to jump into the 
+        // AgentState::UnitTesting of the execute while loop
+        agent.attributes.state = AgentState::UnitTesting;
 
         agent.execute(&mut factsheet)
             .await
