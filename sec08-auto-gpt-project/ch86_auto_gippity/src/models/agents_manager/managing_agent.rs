@@ -5,7 +5,7 @@ use crate::models::agents::agent_traits::{ FactSheet, SpecialFunctions };
 use crate::ai_functions::aifunc_managing::convert_user_input_to_goal;
 use crate::helpers::general::ai_task_request;
 use crate::models::agents::agent_architect::AgentSolutionArchitect;
-use crate::models::general::llm::Message;
+use crate::models::agents::agent_backend::AgentBackendDeveloper;
 
 #[derive(Debug)]
 pub struct ManagingAgent {
@@ -59,18 +59,23 @@ impl ManagingAgent {
 
     fn create_agents(&mut self) {
         self.add_agent(Box::new(AgentSolutionArchitect::new()));
-        // ! TODO add backend agent
+        // ! TODO add backend agent -> we just did
+        self.add_agent(Box::new(AgentBackendDeveloper::new()));
+        // every new agent we create can be added here
     }
 
     pub async fn execute_project(&mut self) {
         self.create_agents();
-
+        // function runs through each agent on after another
+        // alternatively this could be done concurrently with spawning 
+        // a new thread for each agent
         for agent in &mut self.agents {
             let agent_res: Result<(), Box<dyn std::error::Error>> 
                 = agent.execute(&mut self.factsheet).await;
-
-            let agent_info = agent.get_attributes_from_agent();
-            dbg!(agent_info);
+            
+            // uncomment the following lines to see what agents print out
+            // let agent_info = agent.get_attributes_from_agent();
+            // dbg!(agent_info);
         }
     }
 
