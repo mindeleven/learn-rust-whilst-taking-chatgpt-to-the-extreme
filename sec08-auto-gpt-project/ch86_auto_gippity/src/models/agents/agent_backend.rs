@@ -15,17 +15,15 @@ use crate::models::agents::agent_traits::{ FactSheet, RouteObject, SpecialFuncti
 
 use async_trait::async_trait;
 use reqwest::Client;
-use core::error;
 use std::process::{ Command, Stdio };
-use std::thread::panicking;
 use std::time::Duration;
 use tokio::time;
 
 #[derive(Debug)]
-struct AgentBackendDeveloper {
-    attributes: BasicAgent,
-    bug_errors: Option<String>,
-    bug_count: u8
+pub struct AgentBackendDeveloper {
+    pub attributes: BasicAgent,
+    pub bug_errors: Option<String>,
+    pub bug_count: u8
 }
 
 impl AgentBackendDeveloper {
@@ -49,7 +47,7 @@ impl AgentBackendDeveloper {
         let code_template_str: String = read_code_template_contents();
 
         // concatenate instruction
-        let mut msg_context: String = format!(
+        let msg_context: String = format!(
             "CODE TEMPLATE: {} \n PROJECT DESCRIPTION: {} \n",
             code_template_str, factsheet.project_description
         );
@@ -69,7 +67,7 @@ impl AgentBackendDeveloper {
     async fn call_improved_backend_code(&self, factsheet: &mut FactSheet) {
         // concatenate instruction
         // improved backend code is stored in memory in the factsheet
-        let mut msg_context: String = format!(
+        let msg_context: String = format!(
             "CODE TEMPLATE: {:?} \n PROJECT DESCRIPTION: {:?} \n",
             factsheet.backend_code, factsheet
         );
@@ -89,7 +87,7 @@ impl AgentBackendDeveloper {
     async fn call_fix_code_bugs(&self, factsheet: &mut FactSheet) {
         // concatenate instruction
         // improved backend code is stored in memory in the factsheet
-        let mut msg_context: String = format!(
+        let msg_context: String = format!(
             "BROKEN_CODE: {:?} \n ERROR_BUGS: {:?} \n
              THIS FUNCTION ONLY OUTPUTS CODE. JUST OUTPUT THE CODE.",
             factsheet.backend_code, self.bug_errors
