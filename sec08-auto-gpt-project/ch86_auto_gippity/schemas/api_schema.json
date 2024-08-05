@@ -1,87 +1,31 @@
 [
   {
-    "route": "/fitness_data",
-    "is_route_dynamic": "false",
-    "method": "post",
-    "request_body": {
-      "id": "number",
-      "user_id": "number",
-      "activity": "string",
-      "duration": "number",
-      "timestamp": "string",
-      "timezone": "string"
-    },
-    "response": "None"
-  },
-  {
-    "route": "/fitness_data",
-    "is_route_dynamic": "false",
-    "method": "get",
-    "request_body": "None",
-    "response": {
-      "id": "number",
-      "user_id": "number",
-      "activity": "string",
-      "duration": "number",
-      "timestamp": "string",
-      "timezone": "string"
-    }
-  },
-  {
-    "route": "/fitness_data",
-    "is_route_dynamic": "false",
-    "method": "put",
-    "request_body": {
-      "id": "number",
-      "user_id": "number",
-      "activity": "string",
-      "duration": "number",
-      "timestamp": "string",
-      "timezone": "string"
-    },
-    "response": "None"
-  },
-  {
-    "route": "/fitness_data/{id}",
+    "route": "/forex/{pair}",
     "is_route_dynamic": "true",
     "method": "get",
     "request_body": "None",
     "response": {
-      "id": "number",
-      "user_id": "number",
-      "activity": "string",
-      "duration": "number",
-      "timestamp": "string",
-      "timezone": "string"
+      "pair": "string",
+      "price": "number"
     }
   },
   {
-    "route": "/fitness_data/{id}",
-    "is_route_dynamic": "true",
-    "method": "delete",
+    "route": "/forex",
+    "is_route_dynamic": "false",
+    "method": "get",
+    "request_body": "None",
+    "response": [
+      {
+        "pair": "string",
+        "price": "number"
+      }
+    ]
+  },
+  {
+    "route": "/update_forex",
+    "is_route_dynamic": "false",
+    "method": "post",
     "request_body": "None",
     "response": "None"
-  },
-  {
-    "route": "/register",
-    "is_route_dynamic": "false",
-    "method": "post",
-    "request_body": {
-      "id": "number",
-      "username": "string",
-      "password": "string"
-    },
-    "response": "None"
-  },
-  {
-    "route": "/login",
-    "is_route_dynamic": "false",
-    "method": "post",
-    "request_body": {
-      "id": "number",
-      "username": "string",
-      "password": "string"
-    },
-    "response": "string"
   }
 ]
